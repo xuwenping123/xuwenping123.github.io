@@ -1,0 +1,731 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Monda:300,300italic,400,400italic,700,700italic|Roboto Slab:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="xuwenping123, watermelon" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="公司项目是在Excel文件中写入数据，然后将其转换成CSV文件。程序读取CSV文件中数据存放在内存中的。最近在处理这两种文件类型中有了一些经验，基于此想记录总结下。 一、机器环境首先说明本机环境: 12windows 7 SP1版本, office 2016, jdk 1.8, python 2.7.13, javacsv 2.0, fastjson 1.1.46 二、编辑Excel文件的注意点">
+<meta property="og:type" content="article">
+<meta property="og:title" content="excel转csv">
+<meta property="og:url" content="http://yoursite.com/2017/05/24/excel转csv/index.html">
+<meta property="og:site_name" content="watermelon">
+<meta property="og:description" content="公司项目是在Excel文件中写入数据，然后将其转换成CSV文件。程序读取CSV文件中数据存放在内存中的。最近在处理这两种文件类型中有了一些经验，基于此想记录总结下。 一、机器环境首先说明本机环境: 12windows 7 SP1版本, office 2016, jdk 1.8, python 2.7.13, javacsv 2.0, fastjson 1.1.46 二、编辑Excel文件的注意点">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://i.imgur.com/R1qFIbR.png">
+<meta property="og:image" content="http://i.imgur.com/CKZiNbL.png">
+<meta property="og:image" content="http://i.imgur.com/knQwIJK.png">
+<meta property="og:updated_time" content="2018-07-04T12:40:40.716Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="excel转csv">
+<meta name="twitter:description" content="公司项目是在Excel文件中写入数据，然后将其转换成CSV文件。程序读取CSV文件中数据存放在内存中的。最近在处理这两种文件类型中有了一些经验，基于此想记录总结下。 一、机器环境首先说明本机环境: 12windows 7 SP1版本, office 2016, jdk 1.8, python 2.7.13, javacsv 2.0, fastjson 1.1.46 二、编辑Excel文件的注意点">
+<meta name="twitter:image" content="http://i.imgur.com/R1qFIbR.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/05/24/excel转csv/"/>
+
+
+
+
+
+  <title>excel转csv | watermelon</title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">watermelon</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/05/24/excel转csv/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="watermelon">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="watermelon">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">excel转csv</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-05-24T20:40:11+08:00">
+                2017-05-24
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>公司项目是在Excel文件中写入数据，然后将其转换成CSV文件。程序读取CSV文件中数据存放在内存中的。最近在处理这两种文件类型中有了一些经验，基于此想记录总结下。</p>
+<h3 id="一、机器环境"><a href="#一、机器环境" class="headerlink" title="一、机器环境"></a>一、机器环境</h3><p>首先说明本机环境:</p>
+<figure class="highlight lsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">windows <span class="number">7</span> SP1版本, office <span class="number">2016</span>, jdk <span class="number">1.8</span>, python <span class="number">2.7</span><span class="number">.13</span>, </span><br><span class="line">javacsv <span class="number">2.0</span>, fastjson <span class="number">1.1</span><span class="number">.46</span></span><br></pre></td></tr></table></figure>
+<h3 id="二、编辑Excel文件的注意点"><a href="#二、编辑Excel文件的注意点" class="headerlink" title="二、编辑Excel文件的注意点"></a>二、编辑Excel文件的注意点</h3><a id="more"></a>
+<p>1.Excel文件首行首列值不能为”ID”，否则打开转换生成的CSV文件会报错：</p>
+<p>文件格式和拓展名不匹配。文件可能已损坏或不安全。除非您信任其来源，否则请勿打开。是否仍要打开它？</p>
+<p><img src="http://i.imgur.com/R1qFIbR.png" alt=""></p>
+<p>2.Excel文件中不可随意进入单元格，如下图所示，否则转换生成的CSV文件中对应位置将以空字符呈现</p>
+<p><img src="http://i.imgur.com/CKZiNbL.png" alt=""></p>
+<h3 id="三、Excel文件类型转换成CSV文件"><a href="#三、Excel文件类型转换成CSV文件" class="headerlink" title="三、Excel文件类型转换成CSV文件"></a>三、Excel文件类型转换成CSV文件</h3><p>可以使用VBS脚步实现，也可以调用Python库实现。</p>
+<p>1.VBS脚本</p>
+<figure class="highlight cos"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> WScript.Arguments.Count &lt; <span class="number">2</span> Then</span><br><span class="line">	WScript.Echo <span class="string">"Please specify the source and the destination files.</span></span><br><span class="line"><span class="string">	 Usage: ExcelToCsv &lt;xls/xlsx source file&gt; &lt;csv destination file&gt;"</span></span><br><span class="line">		    Wscript.<span class="keyword">Quit</span></span><br><span class="line">	End <span class="keyword">If</span></span><br><span class="line">		</span><br><span class="line">csv_format = <span class="number">6</span></span><br><span class="line">		</span><br><span class="line"><span class="keyword">Set</span> objFSO = CreateObject(<span class="string">"Scripting.FileSystemObject"</span>)</span><br><span class="line">		</span><br><span class="line">src_file = objFSO.GetAbsolutePathName(Wscript.Arguments.Item(<span class="number">0</span>))</span><br><span class="line">dest_file = objFSO.GetAbsolutePathName(WScript.Arguments.Item(<span class="number">1</span>))</span><br><span class="line">		</span><br><span class="line">Dim oExcel</span><br><span class="line"><span class="keyword">Set</span> oExcel = CreateObject(<span class="string">"Excel.Application"</span>)</span><br><span class="line">		</span><br><span class="line">Dim oBook</span><br><span class="line"><span class="keyword">Set</span> oBook = oExcel.Workbooks.<span class="keyword">Open</span>(src_file)</span><br><span class="line">	</span><br><span class="line">oBook.SaveAs dest_file, csv_format</span><br><span class="line">		</span><br><span class="line">oBook.<span class="keyword">Close</span> False</span><br><span class="line">oExcel.<span class="keyword">Quit</span></span><br></pre></td></tr></table></figure>
+<p>使用时可以将该脚本复制存为XlsToCSV.vbs文件，再直接进入到当前文件目录下的命令行里输入（ “&gt;” 表示命令行操作环境）：</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&gt; XlsToCSV<span class="selector-class">.vbs</span> test<span class="selector-class">.xlsx</span> test.csv</span><br></pre></td></tr></table></figure>
+<p>上述方式仅仅能一次操作一个文件，可以使用如下批处理脚本读取文件下所有.xlsx文件，依次将其转移成.csv文件：</p>
+<figure class="highlight dos"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">@<span class="built_in">echo</span> off</span><br><span class="line"><span class="keyword">for</span> <span class="variable">%%i</span> <span class="keyword">in</span> (excel\*.xlsx) <span class="keyword">do</span> XlsToCSV.vbs <span class="variable">%%i</span> csv\<span class="variable">%%~</span>ni.csv</span><br><span class="line"><span class="built_in">pause</span></span><br></pre></td></tr></table></figure>
+<p>上述bat脚本将循环读取当前文件夹下的excel文件下的.xlsx的类型文件将其转换成csv文件下的.csv文件。</p>
+<p>2.python脚本</p>
+<p>可以使用python的csvkit库快速进行Excel转CSV文件</p>
+<p>首先需要搭建python环境，并且将下述路径添加到环境变量中（本机将python安装至默认路径C盘下）：</p>
+<figure class="highlight taggerscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">C:<span class="symbol">\P</span>ython27;C:<span class="symbol">\P</span>ython27<span class="symbol">\S</span>cripts</span><br></pre></td></tr></table></figure>
+<p>然后在命令行进行csvkit库的安装:    </p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;</span><span class="bash"> pip install csvkit</span></span><br></pre></td></tr></table></figure>
+<p>安装需要一段时间。安装完成后，进入Excel文件所在文件夹，输入命令进行文件类型转换</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&gt; <span class="selector-tag">in2csv</span> <span class="selector-tag">test</span><span class="selector-class">.xlsx</span> &gt; <span class="selector-tag">test</span><span class="selector-class">.csv</span></span><br></pre></td></tr></table></figure>
+<p>经测试，in2csv命令在转换时会默认使用utf-8编码，由于Excel打开默认以gbk编码打开，会导致中文乱码的情况。详细可查看其官方文档：</p>
+<p><a href="https://csvkit.readthedocs.io/en/latest/" target="_blank" rel="noopener">https://csvkit.readthedocs.io/en/latest/</a></p>
+<h3 id="四、java加载CSV文件数据"><a href="#四、java加载CSV文件数据" class="headerlink" title="四、java加载CSV文件数据"></a>四、java加载CSV文件数据</h3><p>使用javacsv jar包进行数据读取，可以直接前往官网下载，也可使用maven进行管理：</p>
+<p>官网： <a href="https://www.csvreader.com/java_csv.php" target="_blank" rel="noopener">https://www.csvreader.com/java_csv.php</a></p>
+<p>maven依赖：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">groupId</span>&gt;</span>net.sourceforge.javacsv<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>javacsv<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">version</span>&gt;</span>2.0<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>使用主要方法如下：</p>
+<figure class="highlight haxe"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">String</span> str[] = <span class="literal">null</span>;</span><br><span class="line">CsvReader csvReader = <span class="keyword">new</span> <span class="type">CsvReader</span>(<span class="keyword">new</span> <span class="type">FileInputStream</span>(file), </span><br><span class="line">	Charset.forName(<span class="string">"GBK"</span>));<span class="comment">//创建CsvReader对象，指定读取文件，并指明编码格式</span></span><br><span class="line">csvReader.readHeaders();<span class="comment">//跳过表头</span></span><br><span class="line"><span class="keyword">while</span> (csvReader.readRecord()) &#123;<span class="comment">//判断下一行是否有数据</span></span><br><span class="line">	str = csvReader.getValues();<span class="comment">//读取一行的每一格以字符数组方式返回</span></span><br><span class="line">    csvReader.getRawRecord();<span class="comment">//读取一行数据,返回字符串</span></span><br><span class="line">    csvReader.<span class="keyword">get</span>(<span class="string">"Id"</span>);<span class="comment">//读取某一列数据，返回字符串</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>此处表头实则表示CSV文件内容第一行，如下图所示，表中第一行内容即为表头。</p>
+<p><img src="http://i.imgur.com/knQwIJK.png" alt=""></p>
+<p>项目中使用到如此场景：上图第一行是内容描述，第二行是一个Java Bean 类的属性，第三行是类属性的类型，其后则是类的值。需要读取CSV文件数据并赋值于生成的java Bean类。</p>
+<p>读取到的每一行数据将以key-value 形式保持在Json中，key代表类的属性，value代表类的属性值。再将json置于json数组中以保存。</p>
+<p>注意本地Excel和CSV文件的默认编码格式是GBK。</p>
+<figure class="highlight processing"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">创建两个成员变量字符串数组用于存储java bean类的属性与属性类型：</span><br><span class="line"><span class="keyword">private</span> <span class="keyword">String</span>[] attributes;</span><br><span class="line"><span class="keyword">private</span> <span class="keyword">String</span>[] attributeTypes;</span><br><span class="line"></span><br><span class="line">读取每一行数据进行数据的分配：</span><br><span class="line"><span class="keyword">String</span> <span class="built_in">str</span>[] = <span class="keyword">null</span>;</span><br><span class="line">CsvReader csvReader = <span class="keyword">new</span> CsvReader(<span class="keyword">new</span> FileInputStream(file), </span><br><span class="line">	Charset.forName(<span class="string">"GBK"</span>));<span class="comment">//创建CsvReader对象，指定读取文件，并指明编码格式</span></span><br><span class="line">csvReader.readHeaders();<span class="comment">//跳过表头</span></span><br><span class="line"><span class="built_in">int</span> pos = <span class="number">1</span>;</span><br><span class="line"><span class="keyword">JSONArray</span> jsonArray = <span class="keyword">new</span> <span class="keyword">JSONArray</span>();</span><br><span class="line"><span class="keyword">JSONObject</span> jsonObject = <span class="keyword">new</span> <span class="keyword">JSONObject</span>();</span><br><span class="line"><span class="keyword">while</span> (csvReader.readRecord()) &#123;	<span class="comment">//判断下一行是否有数据</span></span><br><span class="line">	<span class="keyword">if</span> (pos == <span class="number">1</span>) &#123;					<span class="comment">//读取到第一行赋值给类属性</span></span><br><span class="line">		attributes = csvReader.getValues();</span><br><span class="line">	&#125;<span class="keyword">else</span> <span class="keyword">if</span> (pos == <span class="number">2</span>) &#123;			<span class="comment">//读取到第二行赋值给类属性类型</span></span><br><span class="line">		attributeTypes = csvReader.getValues();</span><br><span class="line">	&#125;<span class="keyword">else</span> &#123;</span><br><span class="line">		<span class="built_in">str</span> = csvReader.getValues();</span><br><span class="line">		<span class="keyword">for</span> (<span class="built_in">int</span> i = <span class="number">0</span>; i &lt; <span class="built_in">str</span>.length; i++) &#123;	<span class="comment">//遍历数组，依次赋值类属性</span></span><br><span class="line">			jsonObject.put(attributes[i], <span class="built_in">str</span>[i]);</span><br><span class="line">		&#125;</span><br><span class="line">		jsonArray.<span class="built_in">add</span>(jsonObject);				<span class="comment">//将json存储于jsonArray数组中</span></span><br><span class="line">		jsonObject.<span class="built_in">clear</span>();</span><br><span class="line">	&#125;</span><br><span class="line">	pos++;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>此处使用的fastjson jar包maven依赖：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.alibaba<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>fastjson<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">version</span>&gt;</span>1.1.46<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>再从JSONArray中解析出数据来。不过在解析之前，需要先获取该Java Bean类，基于类的属性创建类可以先创建该.java文件，然后向其写入类属性信息，大体如下方式：</p>
+<figure class="highlight lsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">writer.write(<span class="string">"public class "</span> + %ClassName% + <span class="string">"&#123;\r<span class="subst">\n</span>"</span>);<span class="comment">//ClassName代表类名，与.java文件名需要保持一致</span></span><br><span class="line">for (int i = <span class="number">0</span>; i &lt; attributes.length; i++) &#123;<span class="comment">//循环遍历属性值数组，依次写入文件流中</span></span><br><span class="line">	if (attributesType[i].equals(<span class="string">"string"</span>)) &#123;</span><br><span class="line">		attributesType[i] = <span class="string">"String"</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">//此处为方便，直接写入public属性</span></span><br><span class="line">	writer.write(<span class="string">"<span class="subst">\t</span>public "</span> + attributesType[i] + <span class="string">" "</span> + attributes[i].substring(<span class="number">0</span>, <span class="number">1</span>)</span><br><span class="line">		.toLowerCase() + attributes[i].substring(<span class="number">1</span>) + <span class="string">";\r<span class="subst">\n</span>"</span>);</span><br><span class="line">&#125;</span><br><span class="line">writer.write(<span class="string">"&#125;"</span>);</span><br></pre></td></tr></table></figure>
+<p>最后从JSONArray中解析获得ClassName类的对象</p>
+<pre><code>%ClassName% name[] = null;//创建该类类型数组用于存放从csv文件中读取的数据，
+    对应关系是数组的一个值即一个%ClassName%引用与CSV文件中的一行数据对应
+public void init(JSONArray data) {
+    for (int i = 0; i &lt; data.size(); i++) {
+        name = new %ClassName%[data.size()];
+        name = JSONObject.parseObject(data.getJSONObject(i).toJSONString(), %ClassName%.class);
+    }
+}
+</code></pre>
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/05/10/丁酉年四月十五小记/" rel="next" title="丁酉年四月十五小记">
+                <i class="fa fa-chevron-left"></i> 丁酉年四月十五小记
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="watermelon" />
+          <p class="site-author-name" itemprop="name">watermelon</p>
+           
+              <p class="site-description motion-element" itemprop="description">百无一用此书生</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#一、机器环境"><span class="nav-number">1.</span> <span class="nav-text">一、机器环境</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#二、编辑Excel文件的注意点"><span class="nav-number">2.</span> <span class="nav-text">二、编辑Excel文件的注意点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#三、Excel文件类型转换成CSV文件"><span class="nav-number">3.</span> <span class="nav-text">三、Excel文件类型转换成CSV文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#四、java加载CSV文件数据"><span class="nav-number">4.</span> <span class="nav-text">四、java加载CSV文件数据</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2017 - 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">watermelon</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
