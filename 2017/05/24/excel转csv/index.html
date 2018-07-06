@@ -83,7 +83,7 @@
 <link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="xuwenping123, watermelon" />
+  <meta name="keywords" content="工作总结," />
 
 
 
@@ -99,20 +99,21 @@
 
 
 
-<meta name="description" content="公司项目是在Excel文件中写入数据，然后将其转换成CSV文件。程序读取CSV文件中数据存放在内存中的。最近在处理这两种文件类型中有了一些经验，基于此想记录总结下。 一、机器环境首先说明本机环境: 12windows 7 SP1版本, office 2016, jdk 1.8, python 2.7.13, javacsv 2.0, fastjson 1.1.46 二、编辑Excel文件的注意点">
+<meta name="description" content="公司项目是在Excel文件中写入数据，然后将其转换成CSV文件。程序读取CSV文件中数据存放在内存中的。最近在处理这两种文件类型中有了一些经验，基于此想记录总结下。 机器环境首先说明本机环境: 12windows 7 SP1版本, office 2016, jdk 1.8, python 2.7.13, javacsv 2.0, fastjson 1.1.46 编辑Excel文件的注意点1.Exc">
+<meta name="keywords" content="工作总结">
 <meta property="og:type" content="article">
 <meta property="og:title" content="excel转csv">
 <meta property="og:url" content="http://yoursite.com/2017/05/24/excel转csv/index.html">
 <meta property="og:site_name" content="watermelon">
-<meta property="og:description" content="公司项目是在Excel文件中写入数据，然后将其转换成CSV文件。程序读取CSV文件中数据存放在内存中的。最近在处理这两种文件类型中有了一些经验，基于此想记录总结下。 一、机器环境首先说明本机环境: 12windows 7 SP1版本, office 2016, jdk 1.8, python 2.7.13, javacsv 2.0, fastjson 1.1.46 二、编辑Excel文件的注意点">
+<meta property="og:description" content="公司项目是在Excel文件中写入数据，然后将其转换成CSV文件。程序读取CSV文件中数据存放在内存中的。最近在处理这两种文件类型中有了一些经验，基于此想记录总结下。 机器环境首先说明本机环境: 12windows 7 SP1版本, office 2016, jdk 1.8, python 2.7.13, javacsv 2.0, fastjson 1.1.46 编辑Excel文件的注意点1.Exc">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="http://i.imgur.com/R1qFIbR.png">
 <meta property="og:image" content="http://i.imgur.com/CKZiNbL.png">
 <meta property="og:image" content="http://i.imgur.com/knQwIJK.png">
-<meta property="og:updated_time" content="2018-07-04T12:40:40.716Z">
+<meta property="og:updated_time" content="2018-07-06T13:27:38.576Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="excel转csv">
-<meta name="twitter:description" content="公司项目是在Excel文件中写入数据，然后将其转换成CSV文件。程序读取CSV文件中数据存放在内存中的。最近在处理这两种文件类型中有了一些经验，基于此想记录总结下。 一、机器环境首先说明本机环境: 12windows 7 SP1版本, office 2016, jdk 1.8, python 2.7.13, javacsv 2.0, fastjson 1.1.46 二、编辑Excel文件的注意点">
+<meta name="twitter:description" content="公司项目是在Excel文件中写入数据，然后将其转换成CSV文件。程序读取CSV文件中数据存放在内存中的。最近在处理这两种文件类型中有了一些经验，基于此想记录总结下。 机器环境首先说明本机环境: 12windows 7 SP1版本, office 2016, jdk 1.8, python 2.7.13, javacsv 2.0, fastjson 1.1.46 编辑Excel文件的注意点1.Exc">
 <meta name="twitter:image" content="http://i.imgur.com/R1qFIbR.png">
 
 
@@ -337,15 +338,14 @@
 
       
         <p>公司项目是在Excel文件中写入数据，然后将其转换成CSV文件。程序读取CSV文件中数据存放在内存中的。最近在处理这两种文件类型中有了一些经验，基于此想记录总结下。</p>
-<h3 id="一、机器环境"><a href="#一、机器环境" class="headerlink" title="一、机器环境"></a>一、机器环境</h3><p>首先说明本机环境:</p>
+<h3 id="机器环境"><a href="#机器环境" class="headerlink" title="机器环境"></a>机器环境</h3><p>首先说明本机环境:</p>
 <figure class="highlight lsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">windows <span class="number">7</span> SP1版本, office <span class="number">2016</span>, jdk <span class="number">1.8</span>, python <span class="number">2.7</span><span class="number">.13</span>, </span><br><span class="line">javacsv <span class="number">2.0</span>, fastjson <span class="number">1.1</span><span class="number">.46</span></span><br></pre></td></tr></table></figure>
-<h3 id="二、编辑Excel文件的注意点"><a href="#二、编辑Excel文件的注意点" class="headerlink" title="二、编辑Excel文件的注意点"></a>二、编辑Excel文件的注意点</h3><a id="more"></a>
-<p>1.Excel文件首行首列值不能为”ID”，否则打开转换生成的CSV文件会报错：</p>
+<h3 id="编辑Excel文件的注意点"><a href="#编辑Excel文件的注意点" class="headerlink" title="编辑Excel文件的注意点"></a>编辑Excel文件的注意点</h3><p>1.Excel文件首行首列值不能为”ID”，否则打开转换生成的CSV文件会报错：</p>
 <p>文件格式和拓展名不匹配。文件可能已损坏或不安全。除非您信任其来源，否则请勿打开。是否仍要打开它？</p>
 <p><img src="http://i.imgur.com/R1qFIbR.png" alt=""></p>
 <p>2.Excel文件中不可随意进入单元格，如下图所示，否则转换生成的CSV文件中对应位置将以空字符呈现</p>
 <p><img src="http://i.imgur.com/CKZiNbL.png" alt=""></p>
-<h3 id="三、Excel文件类型转换成CSV文件"><a href="#三、Excel文件类型转换成CSV文件" class="headerlink" title="三、Excel文件类型转换成CSV文件"></a>三、Excel文件类型转换成CSV文件</h3><p>可以使用VBS脚步实现，也可以调用Python库实现。</p>
+<h3 id="Excel文件类型转换成CSV文件"><a href="#Excel文件类型转换成CSV文件" class="headerlink" title="Excel文件类型转换成CSV文件"></a>Excel文件类型转换成CSV文件</h3><p>可以使用VBS脚步实现，也可以调用Python库实现。</p>
 <p>1.VBS脚本</p>
 <figure class="highlight cos"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> WScript.Arguments.Count &lt; <span class="number">2</span> Then</span><br><span class="line">	WScript.Echo <span class="string">"Please specify the source and the destination files.</span></span><br><span class="line"><span class="string">	 Usage: ExcelToCsv &lt;xls/xlsx source file&gt; &lt;csv destination file&gt;"</span></span><br><span class="line">		    Wscript.<span class="keyword">Quit</span></span><br><span class="line">	End <span class="keyword">If</span></span><br><span class="line">		</span><br><span class="line">csv_format = <span class="number">6</span></span><br><span class="line">		</span><br><span class="line"><span class="keyword">Set</span> objFSO = CreateObject(<span class="string">"Scripting.FileSystemObject"</span>)</span><br><span class="line">		</span><br><span class="line">src_file = objFSO.GetAbsolutePathName(Wscript.Arguments.Item(<span class="number">0</span>))</span><br><span class="line">dest_file = objFSO.GetAbsolutePathName(WScript.Arguments.Item(<span class="number">1</span>))</span><br><span class="line">		</span><br><span class="line">Dim oExcel</span><br><span class="line"><span class="keyword">Set</span> oExcel = CreateObject(<span class="string">"Excel.Application"</span>)</span><br><span class="line">		</span><br><span class="line">Dim oBook</span><br><span class="line"><span class="keyword">Set</span> oBook = oExcel.Workbooks.<span class="keyword">Open</span>(src_file)</span><br><span class="line">	</span><br><span class="line">oBook.SaveAs dest_file, csv_format</span><br><span class="line">		</span><br><span class="line">oBook.<span class="keyword">Close</span> False</span><br><span class="line">oExcel.<span class="keyword">Quit</span></span><br></pre></td></tr></table></figure>
 <p>使用时可以将该脚本复制存为XlsToCSV.vbs文件，再直接进入到当前文件目录下的命令行里输入（ “&gt;” 表示命令行操作环境）：</p>
@@ -363,7 +363,7 @@
 <figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&gt; <span class="selector-tag">in2csv</span> <span class="selector-tag">test</span><span class="selector-class">.xlsx</span> &gt; <span class="selector-tag">test</span><span class="selector-class">.csv</span></span><br></pre></td></tr></table></figure>
 <p>经测试，in2csv命令在转换时会默认使用utf-8编码，由于Excel打开默认以gbk编码打开，会导致中文乱码的情况。详细可查看其官方文档：</p>
 <p><a href="https://csvkit.readthedocs.io/en/latest/" target="_blank" rel="noopener">https://csvkit.readthedocs.io/en/latest/</a></p>
-<h3 id="四、java加载CSV文件数据"><a href="#四、java加载CSV文件数据" class="headerlink" title="四、java加载CSV文件数据"></a>四、java加载CSV文件数据</h3><p>使用javacsv jar包进行数据读取，可以直接前往官网下载，也可使用maven进行管理：</p>
+<h3 id="java加载CSV文件数据"><a href="#java加载CSV文件数据" class="headerlink" title="java加载CSV文件数据"></a>java加载CSV文件数据</h3><p>使用javacsv jar包进行数据读取，可以直接前往官网下载，也可使用maven进行管理：</p>
 <p>官网： <a href="https://www.csvreader.com/java_csv.php" target="_blank" rel="noopener">https://www.csvreader.com/java_csv.php</a></p>
 <p>maven依赖：</p>
 <figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">groupId</span>&gt;</span>net.sourceforge.javacsv<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>javacsv<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">version</span>&gt;</span>2.0<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
@@ -414,6 +414,12 @@ public void init(JSONArray data) {
     </div>
 
     <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/工作总结/" rel="tag"># 工作总结</a>
+          
+        </div>
       
 
       
@@ -497,6 +503,15 @@ public void init(JSONArray data) {
           
 
           
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">1</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
 
         </nav>
 
@@ -527,7 +542,7 @@ public void init(JSONArray data) {
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#一、机器环境"><span class="nav-number">1.</span> <span class="nav-text">一、机器环境</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#二、编辑Excel文件的注意点"><span class="nav-number">2.</span> <span class="nav-text">二、编辑Excel文件的注意点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#三、Excel文件类型转换成CSV文件"><span class="nav-number">3.</span> <span class="nav-text">三、Excel文件类型转换成CSV文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#四、java加载CSV文件数据"><span class="nav-number">4.</span> <span class="nav-text">四、java加载CSV文件数据</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#机器环境"><span class="nav-number">1.</span> <span class="nav-text">机器环境</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#编辑Excel文件的注意点"><span class="nav-number">2.</span> <span class="nav-text">编辑Excel文件的注意点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Excel文件类型转换成CSV文件"><span class="nav-number">3.</span> <span class="nav-text">Excel文件类型转换成CSV文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#java加载CSV文件数据"><span class="nav-number">4.</span> <span class="nav-text">java加载CSV文件数据</span></a></li></ol></div>
             
 
           </div>
