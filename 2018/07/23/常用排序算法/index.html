@@ -1,0 +1,840 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Monda:300,300italic,400,400italic,700,700italic|Roboto Slab:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="算法," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="最近在复习排序算法，于是基于《算法 第四版》中排序章节，针对于常用的排序算法通过算法描述、图解、Java可执行代码等几个维度，比较几种常见算法的类似与区别。为了描述的方便，先约定如下：  排序对象为数值型数组，用 int[] array 表示，排序数组长度为N（N为正整数） 排序比较数组数值大小，结果为升序排序 定义交换方法如下，方法功能表示交换数组array下标i，j的值  12345publi">
+<meta name="keywords" content="算法">
+<meta property="og:type" content="article">
+<meta property="og:title" content="常用排序算法">
+<meta property="og:url" content="http://yoursite.com/2018/07/23/常用排序算法/index.html">
+<meta property="og:site_name" content="watermelon">
+<meta property="og:description" content="最近在复习排序算法，于是基于《算法 第四版》中排序章节，针对于常用的排序算法通过算法描述、图解、Java可执行代码等几个维度，比较几种常见算法的类似与区别。为了描述的方便，先约定如下：  排序对象为数值型数组，用 int[] array 表示，排序数组长度为N（N为正整数） 排序比较数组数值大小，结果为升序排序 定义交换方法如下，方法功能表示交换数组array下标i，j的值  12345publi">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://t1.aixinxi.net/o_1cj5rf4id83qgss1vd716cb1stpa.png-j.jpg">
+<meta property="og:image" content="http://t1.aixinxi.net/o_1cj818hl71dm9f0t1kvv1df1h1aa.png-j.jpg">
+<meta property="og:image" content="http://t1.aixinxi.net/o_1cj88mvkc12tv1iujrpsrlb1g8ma.png-j.jpg">
+<meta property="og:image" content="http://t1.aixinxi.net/o_1cj8db7ec1m2kflr1op11pthe5ra.png-j.jpg">
+<meta property="og:image" content="http://t1.aixinxi.net/o_1cjaoebesd55urp9pa146e1liea.png-j.jpg">
+<meta property="og:image" content="http://t1.aixinxi.net/o_1cjatja1efbp1am3113hcd18fha.png-j.jpg">
+<meta property="og:updated_time" content="2018-07-27T02:04:49.552Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="常用排序算法">
+<meta name="twitter:description" content="最近在复习排序算法，于是基于《算法 第四版》中排序章节，针对于常用的排序算法通过算法描述、图解、Java可执行代码等几个维度，比较几种常见算法的类似与区别。为了描述的方便，先约定如下：  排序对象为数值型数组，用 int[] array 表示，排序数组长度为N（N为正整数） 排序比较数组数值大小，结果为升序排序 定义交换方法如下，方法功能表示交换数组array下标i，j的值  12345publi">
+<meta name="twitter:image" content="http://t1.aixinxi.net/o_1cj5rf4id83qgss1vd716cb1stpa.png-j.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/07/23/常用排序算法/"/>
+
+
+
+
+
+  <title>常用排序算法 | watermelon</title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">watermelon</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/07/23/常用排序算法/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="watermelon">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="watermelon">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">常用排序算法</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-07-23T10:15:58+08:00">
+                2018-07-23
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-eye"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>最近在复习排序算法，于是基于《算法 第四版》中排序章节，针对于常用的排序算法通过算法描述、图解、Java可执行代码等几个维度，比较几种常见算法的类似与区别。<br>为了描述的方便，先约定如下：</p>
+<ul>
+<li>排序对象为数值型数组，用 int[] array 表示，排序数组长度为N（N为正整数）</li>
+<li>排序比较数组数值大小，结果为升序排序</li>
+<li>定义交换方法如下，方法功能表示交换数组array下标i，j的值</li>
+</ul>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">swap</span><span class="params">(<span class="keyword">int</span>[] <span class="built_in">array</span>, <span class="keyword">int</span> i, <span class="keyword">int</span> j)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">int</span> temp = <span class="built_in">array</span>[i];</span><br><span class="line">    <span class="built_in">array</span>[i] = <span class="built_in">array</span>[j];</span><br><span class="line">    <span class="built_in">array</span>[j] = temp;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>堆排序中限定堆概念为最小值二叉堆</li>
+<li>以下介绍的排序方法可能会有更好、更容易理解的实现方式，这里仅介绍常见的一种</li>
+</ul>
+<h2 id="衡量指标"><a href="#衡量指标" class="headerlink" title="衡量指标"></a>衡量指标</h2><p>算法在执行过程中时间复杂度与空间复杂度都是衡量算法性能的极其重要的部分。针对于排序算法，时间复杂度主要集中在数组的访问、元素比较以及交换元素等方面；空间复杂度可以忽略固定数目的临时变量以及函数调用所虚的栈，主要关注算法执行过程中是否需要额外的内存，用于保存数组对象的副本等等。除此之外，排序算法的稳定性（即排序之前相等元素的相对位置与排序之后相等元素的相对位置是否变化），在某些场景下也也是需要考虑的。</p>
+<h2 id="选择排序"><a href="#选择排序" class="headerlink" title="选择排序"></a>选择排序</h2><p>选择排序是比较简单的排序算法，它的思想如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">遍历数组，选择数组元素的最小值置于下标最小位置；再在剩下的数组中寻找最小值，置于此次遍历下标最小位置，依次循环。</span><br></pre></td></tr></table></figure>
+<p>总的来说，逐次遍历数组，寻找最小值，找到它合适的位置进行交换。当数组仅剩下一个元素未进行排序时，它就是最大值，就在数组的末尾。<br><img src="http://t1.aixinxi.net/o_1cj5rf4id83qgss1vd716cb1stpa.png-j.jpg" alt=""></p>
+<p>程序代码如下：<br><figure class="highlight arduino"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> selectSort(<span class="keyword">int</span>[] <span class="keyword">array</span>, <span class="keyword">int</span> N) &#123;</span><br><span class="line">    <span class="keyword">int</span> <span class="built_in">min</span>;</span><br><span class="line">    <span class="built_in">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; N - <span class="number">1</span>; i++) &#123;   <span class="comment">//外循环控制当前选择的元素下标，依次递增</span></span><br><span class="line">        <span class="built_in">min</span> = i;</span><br><span class="line">        <span class="built_in">for</span> (<span class="keyword">int</span> j = i + <span class="number">1</span>; j &lt; N; j++)  &#123;  <span class="comment">// 内循环寻找此次遍历的最小值，与外循环选择的元素替换</span></span><br><span class="line">            <span class="built_in">if</span> (<span class="keyword">array</span>[j] &lt; <span class="keyword">array</span>[<span class="built_in">min</span>]) &#123;</span><br><span class="line">                <span class="built_in">min</span> = j;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        swap(<span class="keyword">array</span>, i, <span class="built_in">min</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>下面，对选择排序算法进行简单分析。<br>选择排序实现排序过程中未创建其他数组，内存空间使用较少；比较次数随着外循环依次减少，(N - 1) ~ 1，使用等差数列知识可知总共比较次数 $N(N-1)/2$，每次循环，选择当前最小值进行交换，一共循环 $N-1$ 次，共进行了 $N - 1$次交换；选择排序每次取最小值向前挪至有序数组最后一位，如当前最小值存在重复，下标位置靠后的，先挪动，下标位置靠前的，后挪动，说明选择排序是非稳定性的排序算法。</p>
+<p>选择排序几乎是最简单的排序算法，它有两个明显特征： 其一，交换次数最少；其二，它的上一次遍历没有为下一次遍历提供任何信息，这也意味着，无论当前数组是否有序，它遍历的次数，几乎是相同的。</p>
+<h2 id="插入排序"><a href="#插入排序" class="headerlink" title="插入排序"></a>插入排序</h2><p>插入排序算法的思想如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">将数组分为两部分，前半部有序（升序），后半部无序。</span><br><span class="line">从后半部分无序数组中选择元素，从后向前遍历有序数组，不断交换元素以找到该元素合适的位置插入</span><br></pre></td></tr></table></figure>
+<p><img src="http://t1.aixinxi.net/o_1cj818hl71dm9f0t1kvv1df1h1aa.png-j.jpg" alt=""></p>
+<p>程序代码如下：<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">sort</span><span class="params">(<span class="keyword">int</span>[] <span class="built_in">array</span>, <span class="keyword">int</span> N)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt; N; i++) &#123;	<span class="comment">//外循环控制选中的无序数组的元素下标</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> j = i - <span class="number">1</span>; j &gt;= <span class="number">0</span>; j--) &#123;	<span class="comment">// 内循环在有序数组中基于大小交换位置插入元素</span></span><br><span class="line">            <span class="keyword">if</span> (<span class="built_in">array</span>[j + <span class="number">1</span>] &lt; <span class="built_in">array</span>[j]) &#123;</span><br><span class="line">                swap(<span class="built_in">array</span>, j + <span class="number">1</span>, j);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>插入排序根据比较的结果，不断的交换元素来进行元素的插入。比较次数与交换次数几乎相同（每次遍历交换次数比比较次数少一次），他们的值取决于数组中元素的初始化状态。最好情况下，几乎需要 $N^2/4$次比较与交换，最好情况下，需要 $N - 1$次比较与$0$次插入。<br>插入排序过程中没有使用其他的数组用于保存数组的副本。<br>针对于重复的元素，前面的将插入在前，后面的将插入在后，说明插入排序是稳定性的。</p>
+<h2 id="希尔排序"><a href="#希尔排序" class="headerlink" title="希尔排序"></a>希尔排序</h2><p>希尔排序是插入排序的改进，希尔排序的思想如下：<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">使用h（h &gt; <span class="number">1</span>）对数组元素进行分组得到子数列，借助插入排序使子数列有序；</span><br><span class="line">逐渐减小 h 的值，直至 h = <span class="number">1</span> 为止</span><br></pre></td></tr></table></figure></p>
+<p>h 的值组成的数列被称为步长（或递增序列）。这里为简单起见，设置 h<sub>n</sub>=h<sub>(n-1)</sub>/2, h<sub>0</sub>=N/2 。<br><img src="http://t1.aixinxi.net/o_1cj88mvkc12tv1iujrpsrlb1g8ma.png-j.jpg" alt=""></p>
+<p>程序代码如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">sort</span><span class="params">(<span class="keyword">int</span>[] <span class="built_in">array</span>, <span class="keyword">int</span> N)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> h = N / <span class="number">2</span>;		<span class="comment">// 这里选择的步长 h&lt;sub&gt;n&lt;/sub&gt; = h&lt;sub&gt;n-1&lt;/sub&gt;/2;</span></span><br><span class="line">    <span class="keyword">while</span>(h &gt;= <span class="number">1</span>) &#123;		<span class="comment">// 控制进行插入排序的次数，循环内部使用插入排序</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt; N; i += h)</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> j = i - <span class="number">1</span>; j &gt;= <span class="number">0</span>; j -= h) &#123;</span><br><span class="line">                <span class="keyword">if</span> (<span class="built_in">array</span>[j + <span class="number">1</span>] &lt; <span class="built_in">array</span>[j]) &#123;</span><br><span class="line">                    swap(<span class="built_in">array</span>, j + <span class="number">1</span>, j);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        h = h / <span class="number">2</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>希尔排序的效率会受步长的选择，这里的步长选择也是设计者Donald Shell最初推荐的。合适的步长将会极大提升希尔排序的效率，具体可见 <a href="https://zh.wikipedia.org/wiki/%E5%B8%8C%E5%B0%94%E6%8E%92%E5%BA%8F" target="_blank" rel="noopener">希尔排序</a><br>希尔排序无需另外申请数组空间，它性能的研究是比较复杂的，这里就不介绍了。</p>
+<h2 id="归并排序"><a href="#归并排序" class="headerlink" title="归并排序"></a>归并排序</h2><p>归并排序的思想如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">将数组拆分递归拆分成两半，直到每一半能够快速排序位置；</span><br><span class="line">然后再将拆分的数组进行合并，直至合并完成。</span><br></pre></td></tr></table></figure></p>
+<p>归并排序是分治法的典型实现，先将大问题细分成容易处理的小问题，然后再将小问题的解决结果合并，即得到大问题的解决结果。<br><img src="http://t1.aixinxi.net/o_1cj8db7ec1m2kflr1op11pthe5ra.png-j.jpg" alt=""></p>
+<p>以上是归并排序算法的处理思路，在实现过程中，有些细节点需要注意，比如说数组拆分过程中可以由变量记住拆分点，可以创建临时数组，用于保存数组合并后的元素顺序。</p>
+<p>程序代码如下：<br><figure class="highlight vbscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 归并排序算入入口</span><br><span class="line"> * @param <span class="built_in">array</span> 待排序的数组</span><br><span class="line"> * @param <span class="built_in">left</span>  数组最左元素下标</span><br><span class="line"> * @param <span class="built_in">right</span> 数组最右元素下标</span><br><span class="line"> * @param temp  临时数组，用于保存待排序数组排序后的副本</span><br><span class="line"> */</span><br><span class="line"><span class="keyword">public</span> static void sort(<span class="built_in">int</span>[] <span class="built_in">array</span>, <span class="built_in">int</span> <span class="built_in">left</span>, <span class="built_in">int</span> <span class="built_in">right</span>, <span class="built_in">int</span>[] temp) &#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">right</span> &lt;= <span class="built_in">left</span>) &#123;</span><br><span class="line">        return;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">int</span> <span class="built_in">mid</span> = (<span class="built_in">left</span> + <span class="built_in">right</span>) / <span class="number">2</span>;</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">left</span> &lt;= <span class="built_in">mid</span>) &#123;</span><br><span class="line">        sort(<span class="built_in">array</span>, <span class="built_in">left</span>, <span class="built_in">mid</span>, temp);</span><br><span class="line">        sort(<span class="built_in">array</span>, <span class="built_in">mid</span> + <span class="number">1</span>, <span class="built_in">right</span>, temp);</span><br><span class="line">        merge(<span class="built_in">array</span>, <span class="built_in">left</span>, <span class="built_in">mid</span>, <span class="built_in">right</span>, temp);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * 归并排序算法合并操作</span><br><span class="line"> * @param <span class="built_in">array</span> 待排序数组</span><br><span class="line"> * @param <span class="built_in">left</span>  数组最左元素下标</span><br><span class="line"> * @param <span class="built_in">mid</span>   数组中间元素下标</span><br><span class="line"> * @param <span class="built_in">right</span> 数组最右元素下标</span><br><span class="line"> * @param temp  临时数组</span><br><span class="line"> */</span><br><span class="line"><span class="keyword">private</span> static void merge(<span class="built_in">int</span>[] <span class="built_in">array</span>, <span class="built_in">int</span> <span class="built_in">left</span>, <span class="built_in">int</span> <span class="built_in">mid</span>, <span class="built_in">int</span> <span class="built_in">right</span>, <span class="built_in">int</span>[] temp) &#123;</span><br><span class="line">    <span class="built_in">int</span> i = <span class="built_in">left</span>;</span><br><span class="line">    <span class="built_in">int</span> j = <span class="built_in">mid</span> + <span class="number">1</span>;</span><br><span class="line">    <span class="built_in">int</span> k = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">while</span>(i &lt; j &amp;&amp; i &lt;= <span class="built_in">mid</span> &amp;&amp; j &lt;= <span class="built_in">right</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> (<span class="built_in">array</span>[i] &lt;= <span class="built_in">array</span>[j]) &#123;</span><br><span class="line">            temp[k++] = <span class="built_in">array</span>[i++];</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (<span class="built_in">array</span>[i] &gt; <span class="built_in">array</span>[j]) &#123;</span><br><span class="line">            temp[k++] = <span class="built_in">array</span>[j++];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">while</span> (i &lt;= <span class="built_in">mid</span>) &#123;</span><br><span class="line">        temp[k++] = <span class="built_in">array</span>[i++];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">while</span> (j &lt;= <span class="built_in">right</span>) &#123;</span><br><span class="line">        temp[k++] = <span class="built_in">array</span>[j++];</span><br><span class="line">    &#125;</span><br><span class="line">    k = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">while</span>(<span class="built_in">left</span> &lt;= <span class="built_in">right</span>) &#123;</span><br><span class="line">        <span class="built_in">array</span>[<span class="built_in">left</span>++] = temp[k++];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>归并排序算法调用如下</p>
+<figure class="highlight smali"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">public<span class="keyword"> static</span> void main(String[] args) &#123;</span><br><span class="line">	int[]<span class="built_in"> array </span>= &#123;5, 3, 8, 4, 1, 6, 2, 9&#125;;</span><br><span class="line">    sort(array, 0, array.length - 1,<span class="built_in"> new </span>int[array.length]);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里我们不妨基于归并排序的程序代码更加详细的了解下 “分” 与 “合” 操作，见下图</p>
+<p><img src="http://t1.aixinxi.net/o_1cjaoebesd55urp9pa146e1liea.png-j.jpg" alt=""></p>
+<p>归并排序算法与前面的几个排序算法相比，复杂度增加了不少，排序过程中需要创建数组临时保存排序结果，最终再将临时数组复制至待排序数组。另外可计算，由于二分法拆分合并，归并排序访问数组次数和比较次数均与 $NlgN$ 成正比。</p>
+<h2 id="快速排序"><a href="#快速排序" class="headerlink" title="快速排序"></a>快速排序</h2><p>快速排序是及其有用的一种排序算法，它也采用了分治法的思想，具体如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">先选择切分点，找到切分点在数组中的正确位置，然后基于切分点，将数组分成两部分；再基于划分出的数组，选择切分点，找到切分点的位置并继续切分数组。</span><br></pre></td></tr></table></figure>
+<p>为简单起见，数组的第一个元素默认为切分点，那么该如何找到切分点在数组中的准确位置呢？需对剩下的元素进行左右指针遍历，左边找到比切分点大的元素，与右边所找到的比切分点小的元素进行交换。</p>
+<p><img src="http://t1.aixinxi.net/o_1cjatja1efbp1am3113hcd18fha.png-j.jpg" alt=""></p>
+<p>程序代码如下：</p>
+<figure class="highlight arduino"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 快速排序算法入口</span></span><br><span class="line"><span class="comment"> * @param array 待排序数组</span></span><br><span class="line"><span class="comment"> * @param left  待排序数组最左元素下标</span></span><br><span class="line"><span class="comment"> * @param right 待排序数组最右元素下标</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> sort(<span class="keyword">int</span>[] <span class="keyword">array</span>, <span class="keyword">int</span> left, <span class="keyword">int</span> right) &#123;</span><br><span class="line">    <span class="built_in">if</span> (right &lt;= left) &#123;</span><br><span class="line">        <span class="built_in">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">int</span> j = partition(<span class="keyword">array</span>, left, right);</span><br><span class="line">    sort(<span class="keyword">array</span>, left, j - <span class="number">1</span>);</span><br><span class="line">    sort(<span class="keyword">array</span>, j + <span class="number">1</span>, right);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 快速排序切分点操作</span></span><br><span class="line"><span class="comment"> * @param array 待排序数组</span></span><br><span class="line"><span class="comment"> * @param left  待排序数组最左元素下标</span></span><br><span class="line"><span class="comment"> * @param right 待排序数组最右元素下标</span></span><br><span class="line"><span class="comment"> * @return  int 切分点在数组中位置</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">int</span> partition(<span class="keyword">int</span>[] <span class="keyword">array</span>, <span class="keyword">int</span> left, <span class="keyword">int</span> right) &#123;</span><br><span class="line">    <span class="keyword">int</span> start = left;</span><br><span class="line">    <span class="keyword">int</span> <span class="built_in">end</span> = right + <span class="number">1</span>;</span><br><span class="line">    <span class="built_in">while</span> (true) &#123;</span><br><span class="line">        <span class="built_in">while</span> (<span class="keyword">array</span>[++start] &lt; <span class="keyword">array</span>[left]) &#123;  <span class="comment">//寻找左边大于切分点的元素</span></span><br><span class="line">            <span class="built_in">if</span> (start == right) &#123;</span><br><span class="line">                <span class="built_in">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="built_in">while</span> (<span class="keyword">array</span>[--<span class="built_in">end</span>] &gt; <span class="keyword">array</span>[left]) &#123;    <span class="comment">//寻找右边小于切分点的元素</span></span><br><span class="line">            <span class="built_in">if</span> (<span class="built_in">end</span> == left) &#123;</span><br><span class="line">                <span class="built_in">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="built_in">if</span> (start &gt;= <span class="built_in">end</span>) &#123;</span><br><span class="line">            <span class="built_in">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        swap(<span class="keyword">array</span>, start, <span class="built_in">end</span>);    <span class="comment">//交换两个筛查出的元素</span></span><br><span class="line">    &#125;</span><br><span class="line">    swap(<span class="keyword">array</span>, left, <span class="built_in">end</span>); <span class="comment">//交换切分点与左右指针重逢点</span></span><br><span class="line">    <span class="built_in">return</span> <span class="built_in">end</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>归并排序算法调用如下<br><figure class="highlight smali"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">public<span class="keyword"> static</span> void main(String[] args) &#123;</span><br><span class="line">	int[]<span class="built_in"> array </span>= &#123;5, 3, 8, 4, 1, 6, 2, 9&#125;;</span><br><span class="line">    sort(array, 0, array.length - 1);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>快速排序每次确定一个元素的最终位置，与选择排序不同的是，快速排序将剩下元素分成两组，递归执行。与归并排序相比较，执行过程中未创建新的数组而进行原地排序。总的来说，快速排序是最快的通用排序算法。<br>此外，快速排序有多种优化方式，比如采用中位数作为切分点，这样会避免了数组第一位数是最小值或最大值时的尴尬情况。</p>
+<div style="display: none"><br>//TODO    堆排序        三向快速排序<br>## 堆排序<br><br>堆排序是借助堆这种数据结构而实现的排序算法。（最小值）堆是一种特殊的二叉树结构，它的每个结点小于其子结点，根结点最小。<br>堆排序的算法如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">将数组构造成堆结构，取堆的根结点，然后再次调整</span><br></pre></td></tr></table></figure><br><br></div>
+
+<h2 id="排序算法对比"><a href="#排序算法对比" class="headerlink" title="排序算法对比"></a>排序算法对比</h2><p>在介绍了以上排序算法后，使用下表对介绍的排序算法进行简单总结。</p>
+<table>
+<thead>
+<tr>
+<th>算法</th>
+<th>是否稳定</th>
+<th>是否为原地排序</th>
+<th>时间复杂度</th>
+<th>空间复杂度</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>选择排序</td>
+<td>否</td>
+<td>是</td>
+<td>$N^2$</td>
+<td>1</td>
+<td></td>
+</tr>
+<tr>
+<td>插入排序</td>
+<td>是</td>
+<td>是</td>
+<td>介于$N$与$N^2$之间</td>
+<td>1</td>
+<td>取决于元素输入状态</td>
+</tr>
+<tr>
+<td>希尔排序</td>
+<td>否</td>
+<td>是</td>
+<td>$NlgN$ $N^(5/6)$</td>
+<td>1</td>
+<td></td>
+</tr>
+<tr>
+<td>快速排序</td>
+<td>否</td>
+<td>是</td>
+<td>$NlgN$</td>
+<td>$lgN$</td>
+<td>运行效率由概率保证</td>
+</tr>
+<tr>
+<td>归并排序</td>
+<td>是</td>
+<td>否</td>
+<td>$NlgN$</td>
+<td>$N$</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/算法/" rel="tag"># 算法</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/07/09/git基本原理初探/" rel="next" title="git基本原理初探">
+                <i class="fa fa-chevron-left"></i> git基本原理初探
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="watermelon" />
+          <p class="site-author-name" itemprop="name">watermelon</p>
+           
+              <p class="site-description motion-element" itemprop="description">百无一用此书生</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">4</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">4</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#衡量指标"><span class="nav-number">1.</span> <span class="nav-text">衡量指标</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#选择排序"><span class="nav-number">2.</span> <span class="nav-text">选择排序</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#插入排序"><span class="nav-number">3.</span> <span class="nav-text">插入排序</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#希尔排序"><span class="nav-number">4.</span> <span class="nav-text">希尔排序</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#归并排序"><span class="nav-number">5.</span> <span class="nav-text">归并排序</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#快速排序"><span class="nav-number">6.</span> <span class="nav-text">快速排序</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#排序算法对比"><span class="nav-number">7.</span> <span class="nav-text">排序算法对比</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2017 - 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">watermelon</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      
+    </span>
+  
+</div>
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>
