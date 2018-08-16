@@ -1,0 +1,815 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Monda:300,300italic,400,400italic,700,700italic|Roboto Slab:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="源码阅读," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="上周准备开始阅读一些开源项目的源码，于是选择了最为简单的 common-dbutils。阅读过程中，在关注项目代码编写技巧的同时，也被Maven插件所吸引。 环境搭建这里先简单介绍下dbutils工具，该工具对jdbc的增删改差功能进行了简单的包装，并且提供了操作返回的对象多种封装类型，包括Java Bean、数组、List等等。由于未实现数据库连接池，一般配合 C3p0 共同使用。 dbutil">
+<meta name="keywords" content="源码阅读">
+<meta property="og:type" content="article">
+<meta property="og:title" content="commons-dbutils 源码阅读（上）">
+<meta property="og:url" content="http://yoursite.com/2018/08/12/commons-dbutils-源码阅读（上）/index.html">
+<meta property="og:site_name" content="watermelon">
+<meta property="og:description" content="上周准备开始阅读一些开源项目的源码，于是选择了最为简单的 common-dbutils。阅读过程中，在关注项目代码编写技巧的同时，也被Maven插件所吸引。 环境搭建这里先简单介绍下dbutils工具，该工具对jdbc的增删改差功能进行了简单的包装，并且提供了操作返回的对象多种封装类型，包括Java Bean、数组、List等等。由于未实现数据库连接池，一般配合 C3p0 共同使用。 dbutil">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://t1.aixinxi.net/o_1cku7474p1v9vgco13sb1uv0o4a.png-w.jpg">
+<meta property="og:image" content="http://t1.aixinxi.net/o_1ckuesfdtb9s4df1aba382kmja.png-w.jpg">
+<meta property="og:updated_time" content="2018-08-16T07:47:21.081Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="commons-dbutils 源码阅读（上）">
+<meta name="twitter:description" content="上周准备开始阅读一些开源项目的源码，于是选择了最为简单的 common-dbutils。阅读过程中，在关注项目代码编写技巧的同时，也被Maven插件所吸引。 环境搭建这里先简单介绍下dbutils工具，该工具对jdbc的增删改差功能进行了简单的包装，并且提供了操作返回的对象多种封装类型，包括Java Bean、数组、List等等。由于未实现数据库连接池，一般配合 C3p0 共同使用。 dbutil">
+<meta name="twitter:image" content="http://t1.aixinxi.net/o_1cku7474p1v9vgco13sb1uv0o4a.png-w.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/08/12/commons-dbutils-源码阅读（上）/"/>
+
+
+
+
+
+  <title>commons-dbutils 源码阅读（上） | watermelon</title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">watermelon</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/08/12/commons-dbutils-源码阅读（上）/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="watermelon">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="watermelon">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">commons-dbutils 源码阅读（上）</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-08-12T19:37:10+08:00">
+                2018-08-12
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-eye"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>上周准备开始阅读一些开源项目的源码，于是选择了最为简单的 common-dbutils。阅读过程中，在关注项目代码编写技巧的同时，也被Maven插件所吸引。</p>
+<h2 id="环境搭建"><a href="#环境搭建" class="headerlink" title="环境搭建"></a>环境搭建</h2><p>这里先简单介绍下dbutils工具，该工具对jdbc的增删改差功能进行了简单的包装，并且提供了操作返回的对象多种封装类型，包括Java Bean、数组、List等等。由于未实现数据库连接池，一般配合 C3p0 共同使用。</p>
+<p>dbutils在github上的项目地址是 <a href="https://github.com/apache/commons-dbutils" target="_blank" rel="noopener">commons-dbutils</a>，使用maven管理，这里先克隆至本地项目库<br><figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git clone git@github<span class="selector-class">.com</span>:apache/commons-dbutils<span class="selector-class">.git</span> dbutils</span><br></pre></td></tr></table></figure></p>
+<p>切换至release分支<br><figure class="highlight arduino"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git checkout -b <span class="built_in">release</span> origin/<span class="built_in">release</span></span><br></pre></td></tr></table></figure></p>
+<p>当前的发行版本是 1.7.<br>再将拉取的项目导入idea，选择maven项目，查看.gitignore 文件如下，可以看出，dbutils项目组默认也是使用Idea进行项目开发。<br><figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">.idea</span><br><span class="line">*.iml</span><br><span class="line">target/</span><br><span class="line">/.project</span><br><span class="line">/.settings/</span><br><span class="line">/.classpath</span><br></pre></td></tr></table></figure></p>
+<h2 id="JDBC基本使用"><a href="#JDBC基本使用" class="headerlink" title="JDBC基本使用"></a>JDBC基本使用</h2><p>Java默认使用操作数据库使用Jdbc，当然，Java只是定了一套接口，具体的实现由数据库产商自主实现。由于操作数据库比较复杂繁琐，DbUtils就是对这套接口的核心功能进行了简单的封装。所以在明确DbUtils功能的前提，需要对Jdbc有一定的了解。</p>
+<p>创建一个Jdbc连接数据库的操作，大体上包括6个步骤，这里为简单起见，以Mysql数据库为例，并忽略部分异常代码。</p>
+<ol>
+<li><p>加载数据库驱动程序</p>
+<p> 加载数据库驱动程序一般有两种方式。其一，使用 Class 类</p>
+ <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Class.forName(<span class="string">"com.mysql.jdbc.Driver"</span>);</span><br></pre></td></tr></table></figure>
+<p> 其二，使用DriverManager类</p>
+ <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">DriverManager.registerDriver(<span class="keyword">new</span> com.mysql.jdbc.Driver());</span><br></pre></td></tr></table></figure>
+<p> 一般加载Mysql数据库驱动推荐第一种方式，因为Mysql驱动的com.mysql.jdbc.Driver创建过程，会自动加载。</p>
+</li>
+<li><p>创建数据库连接</p>
+<p> 创建数据库连接需要连接地址与登录用户名与密码</p>
+ <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">String url = <span class="string">"jdbc:mysql://localhost:3306/test"</span>;</span><br><span class="line">String username = <span class="string">"root"</span>;</span><br><span class="line">String password = <span class="string">"root"</span>;</span><br><span class="line">Connection con = DriverManager.getConnection(url , username , password);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>创建语句Statement</p>
+<p> 执行SQL语句，需要获得Statement实例。Statement有三种类型，</p>
+<ul>
+<li><p>Statement<br>  用于执行静态SQL</p>
+</li>
+<li><p>PreparedStatement　　　　<br>  用于执行动态SQL，防止SQL注入</p>
+</li>
+<li><p>CallableStatement<br>  用于执行存储过程</p>
+<p>具体的获取方式如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Statement stmt = con.createStatement();</span><br><span class="line">PreparedStatement pstmt = con.prepareStatement(sql);</span><br><span class="line">CallableStatement cstmt = con.prepareCall(<span class="string">"sql"</span>);</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+<li><p>执行SQL</p>
+<p> Statement提供了三种执行SQL语句的方式</p>
+<ul>
+<li><p>ResultSet executeQuery(String sql)<br>  执行查询数据库的SQL语句，返回一个结果集（ResultSet）对象</p>
+</li>
+<li><p>int executeUpdate(String sqlString)<br>  用于执行INSERT、UPDATE或DELETE语句以及DDL语句，返回影响的数据条数</p>
+</li>
+<li><p>boolean execute(String sql)<br>  用于执行返回多个结果集、多个更新计数或二者组合的语句</p>
+<p>使用示例</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ResultSet rs = stmt.executeQuery(<span class="string">"SELECT * FROM ..."</span>);</span><br><span class="line"><span class="keyword">int</span> rows = stmt.executeUpdate(<span class="string">"INSERT INTO ..."</span>);</span><br><span class="line"><span class="keyword">boolean</span> flag = stmt.execute(String sql);</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+<li><p>处理结果</p>
+<p> 使用Statement执行SQL返回的结果中，除了int、boolean之外，可能包含结果集（ResultSet）对象，需要对结果集进行遍历，获取有效数据.</p>
+ <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">while</span>(rs.next()) &#123;</span><br><span class="line">    String id = rs.getString(<span class="number">1</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>关闭Jdbc对象</p>
+<p> 除却加载数据库驱动外，每次完整的数据库操作过程基本上都会使用到Connect、Statement、ResultSet对象，操作结束后，也需要对这些对象所占用的资源进行清理。</p>
+ <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">rs.close();</span><br><span class="line">stmt.close();</span><br><span class="line">con.close();</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>基于上述的传统的Jdbc模式太过繁杂，DbUtils对此，进行了简单的优化包装，让操作者能够多集中些精力在业务实现，而不是所谓的模板代码上。</p>
+<h2 id="核心器件"><a href="#核心器件" class="headerlink" title="核心器件"></a>核心器件</h2><p>Dbutils是个小工具，总共类（除却测试类）数量大概30个。其中涉及到的器件及调用顺序如下图所示（忽略其中的箭头方向）。<br><img src="http://t1.aixinxi.net/o_1cku7474p1v9vgco13sb1uv0o4a.png-w.jpg" alt=""><br>下面对上图出现的器件进行简单介绍：</p>
+<ul>
+<li><p>DbUtils<br>  Jdbc工具类，提供的功能有：加载数据库驱动，相关资源的关闭，事物的提交与回滚等功能。</p>
+</li>
+<li><p>Connection<br>  数据库连接，这里AbstractQueryRunner使用它来进行jdbc相关操作，包括增、删、改、查、批量处理等，由其子类实现</p>
+</li>
+<li><p>AbstractQueryRunner<br>  核心类，jdbc操作的入口，使用数据库连接进行jdbc相关操作，并返回最终结果</p>
+</li>
+<li><p>Statement PreparedStatement CallableStatement<br>  jdbc提供的三种语句，AbstractQueryRunner使用其执行sql，并将最终返回的结果交由ResultSetHandler处理</p>
+</li>
+<li><p>ResultSetHandler<br>  ResultSet处理类，对执行sql返回的结果提供多种封装操作，包括数组、List、Map等等，由其子类实现，并将封装结果返回给AbstractQueryRunner</p>
+</li>
+<li><p>RowProcessor<br>  列处理器，是sql执行返回结果的实际处理人，由其子类提供的多种处理方式</p>
+</li>
+<li><p>T<br>  这里用来代指sql执行返回的结果</p>
+</li>
+</ul>
+<p>使用Idea作类图如下，为简单，省略了ResultSetHandler其他子类，并且忽略了类之间的依赖、关联关系。</p>
+<p><img src="http://t1.aixinxi.net/o_1ckuesfdtb9s4df1aba382kmja.png-w.jpg" alt=""></p>
+<h2 id="使用示例"><a href="#使用示例" class="headerlink" title="使用示例"></a>使用示例</h2><p>这里将先使用DbUtils实现一个查询Mysql数据库的简单demo，并基于demo的代码深入至DbUtils源码进行阅读。</p>
+<p>先做好数据库层面的工作，建库、建表、插入测试数据<br><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">DATABASE</span> <span class="keyword">TEST</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">USE</span> <span class="keyword">TEST</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> <span class="keyword">IF</span> <span class="keyword">NOT</span> <span class="keyword">EXISTS</span> <span class="string">`T_USERS`</span>(</span><br><span class="line">   <span class="string">`NAME`</span> <span class="built_in">VARCHAR</span>(<span class="number">100</span>) <span class="keyword">NOT</span> <span class="literal">NULL</span>,</span><br><span class="line">   <span class="string">`AGE`</span> <span class="built_in">VARCHAR</span>(<span class="number">10</span>) <span class="keyword">NOT</span> <span class="literal">NULL</span></span><br><span class="line">)<span class="keyword">ENGINE</span>=<span class="keyword">InnoDB</span> <span class="keyword">DEFAULT</span> <span class="keyword">CHARSET</span>=utf8;</span><br><span class="line"></span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> T_USERS (<span class="keyword">NAME</span>, AGE) <span class="keyword">VALUE</span>(<span class="string">'test001'</span>, <span class="string">'18'</span>);</span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> T_USERS (<span class="keyword">NAME</span>, AGE) <span class="keyword">VALUE</span>(<span class="string">'test002'</span>, <span class="string">'19'</span>);</span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> T_USERS (<span class="keyword">NAME</span>, AGE) <span class="keyword">VALUE</span>(<span class="string">'test003'</span>, <span class="string">'20'</span>);</span><br></pre></td></tr></table></figure></p>
+<p>再建立Java Bean类，重写toString()方法<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">User</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> String age;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getName</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setName</span><span class="params">(String name)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.name = name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getAge</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> age;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setAge</span><span class="params">(String age)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.age = age;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"User&#123;"</span> +</span><br><span class="line">                <span class="string">"name='"</span> + name + <span class="string">'\''</span> +</span><br><span class="line">                <span class="string">", age='"</span> + age + <span class="string">'\''</span> +</span><br><span class="line">                <span class="string">'&#125;'</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>这里我们使用ResultSetHandler的子类 BeanHandler来包装查询结果并打印结果。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DbUtilsTest</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> String url = <span class="string">"jdbc:mysql://localhost:3306/TEST"</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> String username = <span class="string">"root"</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> String password = <span class="string">"root"</span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        DbUtils.loadDriver(<span class="string">"com.mysql.jdbc.Driver"</span>);</span><br><span class="line">        Connection con = <span class="keyword">null</span>;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            con = DriverManager.getConnection(url, username, password);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (SQLException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">        String sql = <span class="string">"SELECT * FROM T_USERS"</span>;</span><br><span class="line">        QueryRunner runner = <span class="keyword">new</span> QueryRunner();</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            User user = (User)runner.query(con, sql, <span class="keyword">new</span> BeanHandler(User.class));</span><br><span class="line">            System.out.println(user);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (SQLException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>运行结果如下<br><figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">User&#123;<span class="attribute">name</span>=<span class="string">'test001'</span>, <span class="attribute">age</span>=<span class="string">'18'</span>&#125;</span><br></pre></td></tr></table></figure></p>
+<p>由上，可以看出，DbUtils工具对jdbc的各个阶段的操作，均进行了优化封装。从数据库驱动加载，到创建Statement，执行SQL，处理结果，直到最后的资源关闭，几乎每个流程均进行了优化。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/源码阅读/" rel="tag"># 源码阅读</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/07/31/maven清理LastUpdated文件脚本/" rel="next" title="maven清理LastUpdated文件脚本">
+                <i class="fa fa-chevron-left"></i> maven清理LastUpdated文件脚本
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="watermelon" />
+          <p class="site-author-name" itemprop="name">watermelon</p>
+           
+              <p class="site-description motion-element" itemprop="description">百无一用此书生</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">6</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">6</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#环境搭建"><span class="nav-number">1.</span> <span class="nav-text">环境搭建</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#JDBC基本使用"><span class="nav-number">2.</span> <span class="nav-text">JDBC基本使用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#核心器件"><span class="nav-number">3.</span> <span class="nav-text">核心器件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#使用示例"><span class="nav-number">4.</span> <span class="nav-text">使用示例</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2017 - 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">watermelon</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      
+    </span>
+  
+</div>
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>

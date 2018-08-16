@@ -119,8 +119,8 @@
 <meta property="og:image" content="http://t1.aixinxi.net/o_1cj0olov71mf11aqgpt41luk1jtua.png-j.jpg">
 <meta property="og:image" content="http://t1.aixinxi.net/o_1cj0omjp01ed31sa211pu1tm2nila.png-j.jpg">
 <meta property="og:image" content="http://t1.aixinxi.net/o_1cj0one3s5u79po10geeebccda.png-j.jpg">
-<meta property="og:image" content="http://t1.aixinxi.net/o_1cj0oo3r31klne0312rilkr7cja.png-j.jpg">
-<meta property="og:updated_time" content="2018-07-22T10:32:31.291Z">
+<meta property="og:image" content="http://t1.aixinxi.net/o_1cktl874g2enj7s10s71qnl1suka.png-w.jpg">
+<meta property="og:updated_time" content="2018-08-15T02:05:31.479Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="git基本原理初探">
 <meta name="twitter:description" content="17年上半年开始使用git，这之间没少搜索git的基本命令，只是经常查过即忘。上周分支合并再回滚后，发现再次合并总是提示 Already up-to-date。于是想总结下git基本原理、日常生活中常见的git操作命令与方法。 本文将从如下初始化、git文件流、分支管理等几个方面讲述，需要注意的是，本文系一家之言，如有阙漏，欢迎指出，不胜感激！ 初始化git所管理的项目，来源于两类，要么本地初始化">
@@ -359,9 +359,11 @@
 <li>modified    已修改状态  文件基于commited状态比较有更改（这里认为分支合并后的冲突状态 unmerged 也属于 modified）</li>
 <li>staged    已暂存状态  修改后的文件被暂时存储</li>
 <li>commited    已提交状态  文件已提交至本地版本库</li>
-<li>untracked    未跟踪状态  上述三种状态的文件都已经被git进行管理，未跟踪状态是冒出来的未进行版本管理状态</li>
+<li>untracked    未跟踪状态  上述三种状态的文件都已经被git进行管理，未跟踪状态是冒出来的未进行版本管理状态<!--
+git官方只认为前三种状态，个人觉得文件处于未跟踪状态不能归属于上述的一种，而且也是很重要的一种状态，故单独拉成一列。
+-->
+</li>
 </ul>
-<p>git官方只认为前三种状态，个人觉得文件处于未跟踪状态不能归属于上述的一种，而且也是很重要的一种状态，故单独拉成一列。</p>
 <p><strong> 状态流 </strong><br>下面以实例方式阐述四种状态。</p>
 <p>首先创建 learngit 文件夹进入后进行初始化<br><img src="http://t1.aixinxi.net/o_1ciup4aph1hr319r18ucdqm7maa.png-j.jpg" alt=""><br>在干净的项目中新建文件 readme.md ，并且编辑内容 “ hello， git！” 后保存，检测下当前项目环境<br><img src="http://t1.aixinxi.net/o_1ciuq89q71egq1hop1e4k14h1aara.png-j.jpg" alt=""><br>此时，我们新增的 readme.md 即处于 untracked 状态。<br>我们可以使用 git add 命令选择跟踪 readme.md<br><img src="http://t1.aixinxi.net/o_1ciuqbom21lhpg0n1m61opt1aura.png-j.jpg" alt=""><br>当我们选择添加该文件后，该文件即转到了 staged 状态。<br><img src="http://t1.aixinxi.net/o_1ciuqejug1n6p4ha1nptpeku8ra.png-j.jpg" alt=""><br>执行了 git commit 命令后，我们再查看当前项目环境后发现，readme.md 文件不再显示出来了，此时，它处于 commited 状态。<br>我们继续编辑 readme.md 文件，追加内容 “test modified status！” 再保存，检测下当前项目环境<br><img src="http://t1.aixinxi.net/o_1ciuqiakihp79nv1gmp110n17sea.png-j.jpg" alt=""><br>这里，readme.md 则处于 modified 状态。我们可以继续使用 git add 、 git commit 命令使该文件再不同状态中进行相应的流转。这里就不继续了。</p>
 <p>那么，文件在四种状态中的流程图如下<br><img src="http://t1.aixinxi.net/o_1ciuqlksr1msc14qssuh1fv913c2a.png-j.jpg" alt=""></p>
@@ -371,7 +373,7 @@
 <p>三次提交以后的模型如下<br><img src="http://t1.aixinxi.net/o_1ciuqo1vf1iv3109710q0mmg15kea.png-j.jpg" alt=""><br>而分支，就实现的角度而言，就是指向提交对象的一个指针，如master分支，就可以看作指向提交对象的master指针。<br><img src="http://t1.aixinxi.net/o_1ciur64gt1q28iar1no4lrmqs3a.png" alt=""><br>同时，将会存在一个命名为HEAD的指针，指向当前工作所处的分支，HEAD是指向分支指针的指针。如下所示<br><img src="http://t1.aixinxi.net/o_1civrhog0nm5rm6s1a14tvk5na.png-j.jpg" alt=""><br>这里省去了提交对象指向提交内容的指针，当前工作空间处于develop 分支上，并且master分支与develop分支处于同步状态。</p>
 <p><strong> 分支合并 </strong></p>
 <p>随着分支的创建，以及不断的提交，需要进行合并分支。合并分支基本上会出现两类情形。<br>先看第一类，线性合并分支<br><img src="http://t1.aixinxi.net/o_1cj0olov71mf11aqgpt41luk1jtua.png-j.jpg" alt=""><br>此种情况出现在仅在develop分支进行功能开发，master分支不进行版本提交，最终master分支与develop分支合并时，只虚挪动master分支指针所指向的提交对象即可。这种情况也被称为快进式合并(fast forward)。<br><img src="http://t1.aixinxi.net/o_1cj0omjp01ed31sa211pu1tm2nila.png-j.jpg" alt=""></p>
-<p>再来看第二类，非线性合并分支<br><img src="http://t1.aixinxi.net/o_1cj0one3s5u79po10geeebccda.png-j.jpg" alt=""><br>这种情况出现在不仅仅在develop分支进行功能开发，版本提交，也在master进行了版本提交，最终分支合并时，有三种类型，develop分支与master分支保持一致的，develop分支、master分支单方面修改的，develop分支、master分支均修改的。第一种类型，git将自动侦测到两个分支的祖先提交对象，如这里的commit C,确定那些内容是保持一致的；第二类直接合并没有影响；对于合并的两个分支都修改的内容，git会尝试自动合并，如果出现冲突，需要手动解决冲突。不过git会提示哪些部分是当前所在分支的HEAD的，那些是被合并的分支的(这里的master分支)。<br><img src="http://t1.aixinxi.net/o_1cj0oo3r31klne0312rilkr7cja.png-j.jpg" alt=""></p>
+<p>再来看第二类，非线性合并分支<br><img src="http://t1.aixinxi.net/o_1cj0one3s5u79po10geeebccda.png-j.jpg" alt=""><br>这种情况出现在不仅仅在develop分支进行功能开发，版本提交，也在master进行了版本提交，最终分支合并时，有三种类型，develop分支与master分支保持一致的，develop分支、master分支单方面修改的，develop分支、master分支均修改的。第一种类型，git将自动侦测到两个分支的祖先提交对象，如这里的commit C,确定那些内容是保持一致的；第二类直接合并没有影响；对于合并的两个分支都修改的内容，git会尝试自动合并，如果出现冲突，需要手动解决冲突。不过git会提示哪些部分是当前所在分支的HEAD的，那些是被合并的分支的(这里的master分支)。<br><img src="http://t1.aixinxi.net/o_1cktl874g2enj7s10s71qnl1suka.png-w.jpg" alt=""></p>
 <p><strong> 远程分支 </strong><br>在多人协作的工作环境中，一般需要搭建远端服务器，通过本地git管理，再将分支内容推送至远程分支。一般关于分支管理的功能均在本地完成。这里将不再多介绍。</p>
 <h3 id="分支命令"><a href="#分支命令" class="headerlink" title="分支命令"></a>分支命令</h3><p>本文最后，将基于用户场景，简单的介绍下常见的git关于分支操作的命令。</p>
 <ul>
@@ -556,7 +558,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">5</span>
+                <span class="site-state-item-count">6</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -569,7 +571,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">5</span>
+                <span class="site-state-item-count">6</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
