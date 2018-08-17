@@ -1,0 +1,803 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Monda:300,300italic,400,400italic,700,700italic|Roboto Slab:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="源码阅读," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="源码阅读这一节，我们将从Jdbc使用的六个步骤，从源码角度依次查看分析DbUtils是如何优化的  驱动类加载先进入 org.apache.commons.dbutils.DbUtils#loadDriver(java.lang.String) 12345678910111213141516171819202122232425262728293031323334353637383940414243">
+<meta name="keywords" content="源码阅读">
+<meta property="og:type" content="article">
+<meta property="og:title" content="commons-dbutils-源码阅读（下）">
+<meta property="og:url" content="http://yoursite.com/2018/08/16/commons-dbutils-源码阅读（下）/index.html">
+<meta property="og:site_name" content="watermelon">
+<meta property="og:description" content="源码阅读这一节，我们将从Jdbc使用的六个步骤，从源码角度依次查看分析DbUtils是如何优化的  驱动类加载先进入 org.apache.commons.dbutils.DbUtils#loadDriver(java.lang.String) 12345678910111213141516171819202122232425262728293031323334353637383940414243">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-08-17T08:09:09.929Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="commons-dbutils-源码阅读（下）">
+<meta name="twitter:description" content="源码阅读这一节，我们将从Jdbc使用的六个步骤，从源码角度依次查看分析DbUtils是如何优化的  驱动类加载先进入 org.apache.commons.dbutils.DbUtils#loadDriver(java.lang.String) 12345678910111213141516171819202122232425262728293031323334353637383940414243">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/08/16/commons-dbutils-源码阅读（下）/"/>
+
+
+
+
+
+  <title>commons-dbutils-源码阅读（下） | watermelon</title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">watermelon</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/08/16/commons-dbutils-源码阅读（下）/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="watermelon">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="watermelon">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">commons-dbutils-源码阅读（下）</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-08-16T15:44:58+08:00">
+                2018-08-16
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-eye"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="源码阅读"><a href="#源码阅读" class="headerlink" title="源码阅读"></a>源码阅读</h2><p>这一节，我们将从Jdbc使用的六个步骤，从源码角度依次查看分析DbUtils是如何优化的</p>
+<ol>
+<li><p>驱动类加载<br>先进入 <code>org.apache.commons.dbutils.DbUtils#loadDriver(java.lang.String)</code></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"> <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">boolean</span> <span class="title">loadDriver</span><span class="params">(String driverClassName)</span> </span>&#123;</span><br><span class="line">     <span class="keyword">return</span> loadDriver(DbUtils.class.getClassLoader(), driverClassName);</span><br><span class="line"> &#125;</span><br><span class="line"></span><br><span class="line"> <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">boolean</span> <span class="title">loadDriver</span><span class="params">(ClassLoader classLoader, String driverClassName)</span> </span>&#123;</span><br><span class="line">     <span class="keyword">try</span> &#123;</span><br><span class="line">     	<span class="comment">//使用类加载器通过类名加载</span></span><br><span class="line">         Class&lt;?&gt; loadedClass = classLoader.loadClass(driverClassName);</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">          *判断加载到的Class与Driver.class是否相同、超类</span></span><br><span class="line"><span class="comment">          *驱动类肯定是Driver.class的子类</span></span><br><span class="line"><span class="comment">          */</span></span><br><span class="line">         <span class="keyword">if</span> (!Driver.class.isAssignableFrom(loadedClass)) &#123;</span><br><span class="line">             <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">         &#125;</span><br><span class="line"></span><br><span class="line">         <span class="meta">@SuppressWarnings</span>(<span class="string">"unchecked"</span>) <span class="comment">// guarded by previous check</span></span><br><span class="line">         Class&lt;Driver&gt; driverClass = (Class&lt;Driver&gt;) loadedClass;</span><br><span class="line">         Constructor&lt;Driver&gt; driverConstructor = driverClass.getConstructor();</span><br><span class="line"></span><br><span class="line">         <span class="comment">// make Constructor accessible if it is private</span></span><br><span class="line">         <span class="keyword">boolean</span> isConstructorAccessible = driverConstructor.isAccessible();</span><br><span class="line">         <span class="keyword">if</span> (!isConstructorAccessible) &#123;</span><br><span class="line">             driverConstructor.setAccessible(<span class="keyword">true</span>);</span><br><span class="line">         &#125;</span><br><span class="line"></span><br><span class="line">         <span class="keyword">try</span> &#123;</span><br><span class="line">         	<span class="comment">/**</span></span><br><span class="line"><span class="comment">              * 利用反射，创建驱动类的实例，并使用DriverManager.registerDriver()注册驱动</span></span><br><span class="line"><span class="comment">              * 这里静态导入了DriverManager</span></span><br><span class="line"><span class="comment">              */</span></span><br><span class="line">             Driver driver = driverConstructor.newInstance();</span><br><span class="line">             registerDriver(<span class="keyword">new</span> DriverProxy(driver));</span><br><span class="line">         &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">             driverConstructor.setAccessible(isConstructorAccessible);</span><br><span class="line">         &#125;</span><br><span class="line"></span><br><span class="line">         <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">     &#125; <span class="keyword">catch</span> (RuntimeException e) &#123;</span><br><span class="line">         <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">     &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">         <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">     &#125;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>创建数据库连接<br>DbUtils未实现自己的数据库连接池，在与C3p0配合使用时，可以借助C3p0，获取到DataSource。DataSource可以用于获取数据库连接Connection。当然，也可以传统方式，借助DriverManager获取Connection。<br>下面来看DbUtils如何获取数据库连接。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">AbstractQueryRunner</span> </span>&#123;</span><br><span class="line">	...</span><br><span class="line">    <span class="keyword">protected</span> <span class="keyword">final</span> DataSource ds;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">AbstractQueryRunner</span><span class="params">(DataSource ds)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.ds = ds;</span><br><span class="line">        <span class="keyword">this</span>.stmtConfig = <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>AbstractQueryRunner，查询运行类，其内部持有一个Datasource对象，并提供对象的访问接口<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> DataSource <span class="title">getDataSource</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">this</span>.ds;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>AbstractQueryRunner的子类，实现了执行SQL的功能，这里先看子类QueryRunner是如何使用父类所持有的DataSource。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * 该方法用于执行SQL查询操作，在外界未传递Connection的情况下，它将向父类AbstractQueryRunner索要</span></span><br><span class="line"><span class="comment">   * 父类的prepareConnection（）将从内持的DataSource获取数据库连接</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  # org.apache.commons.dbutils.QueryRunner</span><br><span class="line">  <span class="keyword">public</span> &lt;T&gt; <span class="function">T <span class="title">query</span><span class="params">(String sql, ResultSetHandler&lt;T&gt; rsh)</span> <span class="keyword">throws</span> SQLException </span>&#123;</span><br><span class="line">      Connection conn = <span class="keyword">this</span>.prepareConnection();</span><br><span class="line"><span class="comment">// QueryRunner也支持手动传递Connection，支持外界传递Connection实例</span></span><br><span class="line">      <span class="keyword">return</span> <span class="keyword">this</span>.&lt;T&gt;query(conn, <span class="keyword">true</span>, sql, rsh, (Object[]) <span class="keyword">null</span>);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  # org.apache.commons.dbutils.AbstractQueryRunner</span><br><span class="line">  <span class="function"><span class="keyword">protected</span> Connection <span class="title">prepareConnection</span><span class="params">()</span> <span class="keyword">throws</span> SQLException </span>&#123;</span><br><span class="line">      <span class="keyword">if</span> (<span class="keyword">this</span>.getDataSource() == <span class="keyword">null</span>) &#123;</span><br><span class="line">          <span class="keyword">throw</span> <span class="keyword">new</span> SQLException(</span><br><span class="line">                  <span class="string">"QueryRunner requires a DataSource to be "</span></span><br><span class="line">                          + <span class="string">"invoked in this way, or a Connection should be passed in"</span>);</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">return</span> <span class="keyword">this</span>.getDataSource().getConnection();</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure></p>
+<ol start="3">
+<li><p>创建Statement、执行SQL、处理结果<br>AbstractQueryRunner是DbUtils的核心类，关于SQL执行操作全部由其子类完成。它有两个子类：</p>
+<p> <code>org.apache.commons.dbutils.QueryRunner</code>        封装同步SQL操作<br> <code>org.apache.commons.dbutils.AsyncQueryRunner</code>    封装异步SQL操作</p>
+<p> 这里先基于上节DbUtils使用示例查看源码如何实现查询接口并对结果进行封装</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 示例代码使用BeanHandler&lt;User&gt;代替这里的ResultSetHandler&lt;T&gt; rsh</span></span><br><span class="line">   <span class="comment">// sql : SELECT * FROM T_USERS</span></span><br><span class="line">   # org.apache.commons.dbutils.QueryRunner</span><br><span class="line">   <span class="keyword">public</span> &lt;T&gt; <span class="function">T <span class="title">query</span><span class="params">(Connection conn, String sql, ResultSetHandler&lt;T&gt; rsh)</span> <span class="keyword">throws</span> SQLException </span>&#123;</span><br><span class="line">       <span class="keyword">return</span> <span class="keyword">this</span>.&lt;T&gt;query(conn, <span class="keyword">false</span>, sql, rsh, (Object[]) <span class="keyword">null</span>);</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   <span class="keyword">private</span> &lt;T&gt; <span class="function">T <span class="title">query</span><span class="params">(Connection conn, <span class="keyword">boolean</span> closeConn, String sql, ResultSetHandler&lt;T&gt; rsh, Object... params)</span></span></span><br><span class="line"><span class="function">           <span class="keyword">throws</span> SQLException </span>&#123;</span><br><span class="line">       <span class="keyword">if</span> (conn == <span class="keyword">null</span>) &#123;</span><br><span class="line">           <span class="keyword">throw</span> <span class="keyword">new</span> SQLException(<span class="string">"Null connection"</span>);</span><br><span class="line">       &#125;</span><br><span class="line"></span><br><span class="line">       <span class="keyword">if</span> (sql == <span class="keyword">null</span>) &#123;</span><br><span class="line">           <span class="keyword">if</span> (closeConn) &#123;</span><br><span class="line">               close(conn);</span><br><span class="line">           &#125;</span><br><span class="line">           <span class="keyword">throw</span> <span class="keyword">new</span> SQLException(<span class="string">"Null SQL statement"</span>);</span><br><span class="line">       &#125;</span><br><span class="line"></span><br><span class="line">       <span class="keyword">if</span> (rsh == <span class="keyword">null</span>) &#123;</span><br><span class="line">           <span class="keyword">if</span> (closeConn) &#123;</span><br><span class="line">               close(conn);</span><br><span class="line">           &#125;</span><br><span class="line">           <span class="keyword">throw</span> <span class="keyword">new</span> SQLException(<span class="string">"Null ResultSetHandler"</span>);</span><br><span class="line">       &#125;</span><br><span class="line"></span><br><span class="line">       PreparedStatement stmt = <span class="keyword">null</span>;</span><br><span class="line">       ResultSet rs = <span class="keyword">null</span>;</span><br><span class="line">       T result = <span class="keyword">null</span>;</span><br><span class="line"></span><br><span class="line">       <span class="keyword">try</span> &#123;</span><br><span class="line">       	<span class="comment">// 使用父类方法获取PreparedStatement实例</span></span><br><span class="line">           stmt = <span class="keyword">this</span>.prepareStatement(conn, sql);</span><br><span class="line">           <span class="comment">// 使用父类方法填充SQL参数</span></span><br><span class="line">           <span class="keyword">this</span>.fillStatement(stmt, params);</span><br><span class="line">           <span class="comment">// 使用父类方法执行SQL，获取执行结果</span></span><br><span class="line">           rs = <span class="keyword">this</span>.wrap(stmt.executeQuery());</span><br><span class="line">           <span class="comment">// 对SQL执行结果进行处理</span></span><br><span class="line">           result = rsh.handle(rs);</span><br><span class="line"></span><br><span class="line">       &#125; <span class="keyword">catch</span> (SQLException e) &#123;</span><br><span class="line">           <span class="keyword">this</span>.rethrow(e, sql, params);</span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">        * 资源释放，释放的资源有：</span></span><br><span class="line"><span class="comment">        *　ResultSet、PreparedStatement、Connection</span></span><br><span class="line"><span class="comment">        */</span></span><br><span class="line">       &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">           <span class="keyword">try</span> &#123;</span><br><span class="line">               close(rs);</span><br><span class="line">           &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">               close(stmt);</span><br><span class="line">               <span class="keyword">if</span> (closeConn) &#123;</span><br><span class="line">                   close(conn);</span><br><span class="line">               &#125;</span><br><span class="line">           &#125;</span><br><span class="line">       &#125;</span><br><span class="line"></span><br><span class="line">       <span class="keyword">return</span> result;</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line"># org.apache.commons.dbutils.AbstractQueryRunner</span><br><span class="line">   <span class="function"><span class="keyword">protected</span> PreparedStatement <span class="title">prepareStatement</span><span class="params">(Connection conn, String sql)</span></span></span><br><span class="line"><span class="function">           <span class="keyword">throws</span> SQLException </span>&#123;</span><br><span class="line">	<span class="comment">//　获取动态执行语句PreparedStatement</span></span><br><span class="line">       PreparedStatement ps = conn.prepareStatement(sql);</span><br><span class="line">       <span class="keyword">try</span> &#123;</span><br><span class="line">       	<span class="comment">//　配置PreparedStatement</span></span><br><span class="line">           configureStatement(ps);</span><br><span class="line">       &#125; <span class="keyword">catch</span> (SQLException e) &#123;</span><br><span class="line">           ps.close();</span><br><span class="line">           <span class="keyword">throw</span> e;</span><br><span class="line">       &#125;</span><br><span class="line">       <span class="keyword">return</span> ps;</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">configureStatement</span><span class="params">(Statement stmt)</span> <span class="keyword">throws</span> SQLException </span>&#123;</span><br><span class="line"></span><br><span class="line">       <span class="keyword">if</span> (stmtConfig != <span class="keyword">null</span>) &#123;</span><br><span class="line">       	<span class="comment">// 设置此 Statement 对象创建的 ResultSet 对象中将处理行的方向</span></span><br><span class="line">           <span class="keyword">if</span> (stmtConfig.isFetchDirectionSet()) &#123;</span><br><span class="line">               stmt.setFetchDirection(stmtConfig.getFetchDirection());</span><br><span class="line">           &#125;</span><br><span class="line">		<span class="comment">// 设置此 Statement 生成的 ResultSet 对象从数据库获取数据时起始行数</span></span><br><span class="line">           <span class="keyword">if</span> (stmtConfig.isFetchSizeSet()) &#123;</span><br><span class="line">               stmt.setFetchSize(stmtConfig.getFetchSize());</span><br><span class="line">           &#125;</span><br><span class="line">		<span class="comment">// 设置此 Statement 生成的 ResultSet 对象从数据库获取数据时最多条数</span></span><br><span class="line">           <span class="keyword">if</span> (stmtConfig.isMaxFieldSizeSet()) &#123;</span><br><span class="line">               stmt.setMaxFieldSize(stmtConfig.getMaxFieldSize());</span><br><span class="line">           &#125;</span><br><span class="line">		<span class="comment">// 设置此 Statement 生成的 ResultSet 对象从数据库获取数据时最大行数</span></span><br><span class="line">           <span class="keyword">if</span> (stmtConfig.isMaxRowsSet()) &#123;</span><br><span class="line">               stmt.setMaxRows(stmtConfig.getMaxRows());</span><br><span class="line">           &#125;</span><br><span class="line">		<span class="comment">// 设置SQL执行的超时时间</span></span><br><span class="line">           <span class="keyword">if</span> (stmtConfig.isQueryTimeoutSet()) &#123;</span><br><span class="line">               stmt.setQueryTimeout(stmtConfig.getQueryTimeout());</span><br><span class="line">           &#125;</span><br><span class="line">       &#125;</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   <span class="comment">// stmtConfig是AbstractQueryRunner内部属性，用于保存Statement的配置；</span></span><br><span class="line">   <span class="comment">// 创建AbstractQueryRunner会对stmtConfig进行设置</span></span><br><span class="line">   <span class="keyword">private</span> <span class="keyword">final</span> StatementConfiguration stmtConfig;</span><br><span class="line"></span><br><span class="line"># org.apache.commons.dbutils.AbstractQueryRunner</span><br><span class="line">   <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">fillStatement</span><span class="params">(PreparedStatement stmt, Object... params)</span></span></span><br><span class="line"><span class="function">           <span class="keyword">throws</span> SQLException </span>&#123;</span><br><span class="line">	<span class="comment">// 校验 PreparedStatement需要的参数数量与传入的可变数组的数量是否相同</span></span><br><span class="line">       <span class="comment">// check the parameter count, if we can</span></span><br><span class="line">       ParameterMetaData pmd = <span class="keyword">null</span>;</span><br><span class="line">       <span class="keyword">if</span> (!pmdKnownBroken) &#123;</span><br><span class="line">           <span class="keyword">try</span> &#123;</span><br><span class="line">               pmd = stmt.getParameterMetaData();</span><br><span class="line">               <span class="keyword">if</span> (pmd == <span class="keyword">null</span>) &#123; <span class="comment">// can be returned by implementations that don't support the method</span></span><br><span class="line">                   pmdKnownBroken = <span class="keyword">true</span>;</span><br><span class="line">               &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                   <span class="keyword">int</span> stmtCount = pmd.getParameterCount();</span><br><span class="line">                   <span class="keyword">int</span> paramsCount = params == <span class="keyword">null</span> ? <span class="number">0</span> : params.length;</span><br><span class="line"></span><br><span class="line">                   <span class="keyword">if</span> (stmtCount != paramsCount) &#123;</span><br><span class="line">                       <span class="keyword">throw</span> <span class="keyword">new</span> SQLException(<span class="string">"Wrong number of parameters: expected "</span></span><br><span class="line">                               + stmtCount + <span class="string">", was given "</span> + paramsCount);</span><br><span class="line">                   &#125;</span><br><span class="line">               &#125;</span><br><span class="line">           &#125; <span class="keyword">catch</span> (SQLFeatureNotSupportedException ex) &#123;</span><br><span class="line">               pmdKnownBroken = <span class="keyword">true</span>;</span><br><span class="line">           &#125;</span><br><span class="line">           <span class="comment">// TODO see DBUTILS-117: would it make sense to catch any other SQLEx types here?</span></span><br><span class="line">       &#125;</span><br><span class="line"></span><br><span class="line">       <span class="comment">// nothing to do here</span></span><br><span class="line">       <span class="keyword">if</span> (params == <span class="keyword">null</span>) &#123;</span><br><span class="line">           <span class="keyword">return</span>;</span><br><span class="line">       &#125;</span><br><span class="line"></span><br><span class="line">       CallableStatement call = <span class="keyword">null</span>;</span><br><span class="line">       <span class="keyword">if</span> (stmt <span class="keyword">instanceof</span> CallableStatement) &#123;</span><br><span class="line">           call = (CallableStatement) stmt;</span><br><span class="line">       &#125;</span><br><span class="line">	<span class="comment">// PreparedStatement设置参数序号从 1 开始</span></span><br><span class="line">       <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; params.length; i++) &#123;</span><br><span class="line">           <span class="keyword">if</span> (params[i] != <span class="keyword">null</span>) &#123;</span><br><span class="line">           	<span class="comment">// 传入参数不为null时，普通SQL直接设值，存储过程则需要特殊设置</span></span><br><span class="line">               <span class="keyword">if</span> (call != <span class="keyword">null</span> &amp;&amp; params[i] <span class="keyword">instanceof</span> OutParameter) &#123;</span><br><span class="line">                   ((OutParameter)params[i]).register(call, i + <span class="number">1</span>);</span><br><span class="line">               &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                   stmt.setObject(i + <span class="number">1</span>, params[i]);</span><br><span class="line">               &#125;</span><br><span class="line">           &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">           	<span class="comment">// 传入参数为null时，使用java.sql.PreparedStatement#setNull(int, int)设置，避免oracle报错</span></span><br><span class="line">               <span class="comment">// VARCHAR works with many drivers regardless</span></span><br><span class="line">               <span class="comment">// of the actual column type. Oddly, NULL and</span></span><br><span class="line">               <span class="comment">// OTHER don't work with Oracle's drivers.</span></span><br><span class="line">               <span class="keyword">int</span> sqlType = Types.VARCHAR;</span><br><span class="line">               <span class="keyword">if</span> (!pmdKnownBroken) &#123;</span><br><span class="line">                   <span class="comment">// TODO see DBUTILS-117: does it make sense to catch SQLEx here?</span></span><br><span class="line">                   <span class="keyword">try</span> &#123;</span><br><span class="line">                       <span class="comment">/*</span></span><br><span class="line"><span class="comment">                        * It's not possible for pmdKnownBroken to change from</span></span><br><span class="line"><span class="comment">                        * true to false, (once true, always true) so pmd cannot</span></span><br><span class="line"><span class="comment">                        * be null here.</span></span><br><span class="line"><span class="comment">                        */</span></span><br><span class="line">                       sqlType = pmd.getParameterType(i + <span class="number">1</span>);</span><br><span class="line">                   &#125; <span class="keyword">catch</span> (SQLException e) &#123;</span><br><span class="line">                       pmdKnownBroken = <span class="keyword">true</span>;</span><br><span class="line">                   &#125;</span><br><span class="line">               &#125;</span><br><span class="line">               stmt.setNull(i + <span class="number">1</span>, sqlType);</span><br><span class="line">           &#125;</span><br><span class="line">       &#125;</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   <span class="comment">// pmdKnownBroken用于保存当前数据库驱动是否支持java.sql.ParameterMetaData#getParameterType 操作</span></span><br><span class="line">   <span class="comment">// 使用volatile修饰，避免多线程下值不一致</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">volatile</span> <span class="keyword">boolean</span> pmdKnownBroken = <span class="keyword">false</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 包装下ResultSet结果并返回ResultSet，这里实在没明白父类的包装方法wrap()想做啥</span></span><br><span class="line"># org.apache.commons.dbutils.AbstractQueryRunner</span><br><span class="line">   <span class="function"><span class="keyword">protected</span> ResultSet <span class="title">wrap</span><span class="params">(ResultSet rs)</span> </span>&#123;</span><br><span class="line">       <span class="keyword">return</span> rs;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>接下来分析DbUtils如何对结果进行处理包装，以BeanHandler为例。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">ResultSetHandler</span>&lt;<span class="title">T</span>&gt; </span>&#123;</span><br><span class="line">	<span class="comment">// ResultSetHandler结果处理器接口中只有handle()一个方法</span></span><br><span class="line">    <span class="function">T <span class="title">handle</span><span class="params">(ResultSet rs)</span> <span class="keyword">throws</span> SQLException</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">	# org.apache.commons.dbutils.handlers.BeanHandler</span><br><span class="line">    <span class="function"><span class="keyword">public</span> T <span class="title">handle</span><span class="params">(ResultSet rs)</span> <span class="keyword">throws</span> SQLException </span>&#123;</span><br><span class="line">        <span class="comment">// 使用内部持有对象RowProcessor进行实际转换操作</span></span><br><span class="line">        <span class="keyword">return</span> rs.next() ? <span class="keyword">this</span>.convert.toBean(rs, <span class="keyword">this</span>.type) : <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 默认使用ArrayHandler.ROW_PROCESSOR进行转换</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="title">BeanHandler</span><span class="params">(Class&lt;? extends T&gt; type)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>(type, ArrayHandler.ROW_PROCESSOR);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 用于保存需要转换成的类型</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> Class&lt;? extends T&gt; type;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 内部持有的转换器引用</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> RowProcessor convert;</span><br></pre></td></tr></table></figure></p>
+<p>下面查看ArrayHandler.ROW_PROCESSOR具体内容<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># org.apache.commons.dbutils.handlers.ArrayHandler</span><br><span class="line"><span class="keyword">static</span> <span class="keyword">final</span> RowProcessor ROW_PROCESSOR = <span class="keyword">new</span> BasicRowProcessor();</span><br></pre></td></tr></table></figure></p>
+<p>BasicRowProcessor内部实现了ResultSet结果集向Array、Map的转换，我们先来查看关于转换Array、Map的过程<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"># org.apache.commons.dbutils.BasicRowProcessor</span><br><span class="line">   <span class="keyword">public</span> Object[] toArray(ResultSet rs) <span class="keyword">throws</span> SQLException &#123;</span><br><span class="line">       ResultSetMetaData meta = rs.getMetaData();</span><br><span class="line">       <span class="comment">// 获取结果集数量</span></span><br><span class="line">       <span class="keyword">int</span> cols = meta.getColumnCount();</span><br><span class="line">       Object[] result = <span class="keyword">new</span> Object[cols];</span><br><span class="line">	<span class="comment">// 使用 Object[] array 数组进行结果存储</span></span><br><span class="line">       <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; cols; i++) &#123;</span><br><span class="line">           result[i] = rs.getObject(i + <span class="number">1</span>);</span><br><span class="line">       &#125;</span><br><span class="line"></span><br><span class="line">       <span class="keyword">return</span> result;</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   <span class="function"><span class="keyword">public</span> Map&lt;String, Object&gt; <span class="title">toMap</span><span class="params">(ResultSet rs)</span> <span class="keyword">throws</span> SQLException </span>&#123;</span><br><span class="line">   	<span class="comment">/**</span></span><br><span class="line"><span class="comment">        * CaseInsensitiveHashMap是BasicRowProcessor内部类，它内部持有一个HashMap&lt;String, String&gt;实例</span></span><br><span class="line"><span class="comment">        * 其作用就是为了实现Map键key为小写的字符串</span></span><br><span class="line"><span class="comment">        * 为此，该类重写了map的基本方法，包括put、get、containsKey等</span></span><br><span class="line"><span class="comment">        */</span></span><br><span class="line">       Map&lt;String, Object&gt; result = <span class="keyword">new</span> CaseInsensitiveHashMap();</span><br><span class="line">       ResultSetMetaData rsmd = rs.getMetaData();</span><br><span class="line">       <span class="keyword">int</span> cols = rsmd.getColumnCount();</span><br><span class="line"></span><br><span class="line">       <span class="comment">/**</span></span><br><span class="line"><span class="comment">        * 列名可以从接口 java.sql.ResultSetMetaData#getColumnLabel 或 java.sql.ResultSetMetaData#getColumnName 获得</span></span><br><span class="line"><span class="comment">        * 列值可以从接口 java.sql.ResultSet#getObject(int) 获得</span></span><br><span class="line"><span class="comment">        */</span></span><br><span class="line">       <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;= cols; i++) &#123;</span><br><span class="line">           String columnName = rsmd.getColumnLabel(i);</span><br><span class="line">           <span class="keyword">if</span> (<span class="keyword">null</span> == columnName || <span class="number">0</span> == columnName.length()) &#123;</span><br><span class="line">             columnName = rsmd.getColumnName(i);</span><br><span class="line">           &#125;</span><br><span class="line">           result.put(columnName, rs.getObject(i));</span><br><span class="line">       &#125;</span><br><span class="line"></span><br><span class="line">       <span class="keyword">return</span> result;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure></p>
+<p>以上是关于数组、Map的转换过程，BasicRowProcessor内部持有BeanProcessor的对象，并将所有关于Bean的转换过程，交由BeanProcessor进行处理<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">BasicRowProcessor</span> <span class="keyword">implements</span> <span class="title">RowProcessor</span> </span>&#123;</span><br><span class="line">    ...</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> BeanProcessor defaultConvert = <span class="keyword">new</span> BeanProcessor();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> BeanProcessor convert;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 采用默认的Bean转换器</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">BasicRowProcessor</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>(defaultConvert);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">BasicRowProcessor</span><span class="params">(BeanProcessor convert)</span> </span>&#123;</span><br><span class="line">    	<span class="keyword">super</span>();</span><br><span class="line">    	<span class="keyword">this</span>.convert = convert;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// ToBean 操作交由内部持有的Bean转换器</span></span><br><span class="line">    <span class="keyword">public</span> &lt;T&gt; <span class="function">T <span class="title">toBean</span><span class="params">(ResultSet rs, Class&lt;? extends T&gt; type)</span> <span class="keyword">throws</span> SQLException </span>&#123;</span><br><span class="line">    	<span class="keyword">return</span> <span class="keyword">this</span>.convert.toBean(rs, type);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>我们继续跟踪代码，查看 BeanProcessor 内部如何进行Bean的处理<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br></pre></td><td class="code"><pre><span class="line"># org.apache.commons.dbutils.BeanProcessor</span><br><span class="line">   <span class="keyword">public</span> &lt;T&gt; <span class="function">T <span class="title">toBean</span><span class="params">(ResultSet rs, Class&lt;? extends T&gt; type)</span> <span class="keyword">throws</span> SQLException </span>&#123;</span><br><span class="line">   	<span class="comment">// 获取类的实例</span></span><br><span class="line">       T bean = <span class="keyword">this</span>.newInstance(type);</span><br><span class="line">       <span class="keyword">return</span> <span class="keyword">this</span>.populateBean(rs, bean);</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   <span class="comment">// 内部将 Class.newInstance() 进行了封装</span></span><br><span class="line">   <span class="keyword">protected</span> &lt;T&gt; <span class="function">T <span class="title">newInstance</span><span class="params">(Class&lt;T&gt; c)</span> <span class="keyword">throws</span> SQLException </span>&#123;</span><br><span class="line">       <span class="keyword">try</span> &#123;</span><br><span class="line">           <span class="keyword">return</span> c.newInstance();</span><br><span class="line"></span><br><span class="line">       &#125; <span class="keyword">catch</span> (InstantiationException e) &#123;</span><br><span class="line">           <span class="keyword">throw</span> <span class="keyword">new</span> SQLException(</span><br><span class="line">               <span class="string">"Cannot create "</span> + c.getName() + <span class="string">": "</span> + e.getMessage());</span><br><span class="line"></span><br><span class="line">       &#125; <span class="keyword">catch</span> (IllegalAccessException e) &#123;</span><br><span class="line">           <span class="keyword">throw</span> <span class="keyword">new</span> SQLException(</span><br><span class="line">               <span class="string">"Cannot create "</span> + c.getName() + <span class="string">": "</span> + e.getMessage());</span><br><span class="line">       &#125;</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 转换操作在这个方法中实现完成</span></span><br><span class="line">   <span class="keyword">public</span> &lt;T&gt; <span class="function">T <span class="title">populateBean</span><span class="params">(ResultSet rs, T bean)</span> <span class="keyword">throws</span> SQLException </span>&#123;</span><br><span class="line">       PropertyDescriptor[] props = <span class="keyword">this</span>.propertyDescriptors(bean.getClass());</span><br><span class="line">       ResultSetMetaData rsmd = rs.getMetaData();</span><br><span class="line">       <span class="keyword">int</span>[] columnToProperty = <span class="keyword">this</span>.mapColumnsToProperties(rsmd, props);</span><br><span class="line"></span><br><span class="line">       <span class="keyword">return</span> populateBean(rs, bean, props, columnToProperty);</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 这里通过JDK关于Java Bean的接口，获取Bean类的相应属性集合</span></span><br><span class="line">   <span class="keyword">private</span> PropertyDescriptor[] propertyDescriptors(Class&lt;?&gt; c)</span><br><span class="line">       <span class="keyword">throws</span> SQLException &#123;</span><br><span class="line">       <span class="comment">// Introspector caches BeanInfo classes for better performance</span></span><br><span class="line">       BeanInfo beanInfo = <span class="keyword">null</span>;</span><br><span class="line">       <span class="keyword">try</span> &#123;</span><br><span class="line">           beanInfo = Introspector.getBeanInfo(c);</span><br><span class="line"></span><br><span class="line">       &#125; <span class="keyword">catch</span> (IntrospectionException e) &#123;</span><br><span class="line">           <span class="keyword">throw</span> <span class="keyword">new</span> SQLException(</span><br><span class="line">               <span class="string">"Bean introspection failed: "</span> + e.getMessage());</span><br><span class="line">       &#125;</span><br><span class="line"></span><br><span class="line">       <span class="keyword">return</span> beanInfo.getPropertyDescriptors();</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 获取列属性</span></span><br><span class="line">   <span class="keyword">protected</span> <span class="keyword">int</span>[] mapColumnsToProperties(ResultSetMetaData rsmd,</span><br><span class="line">           PropertyDescriptor[] props) <span class="keyword">throws</span> SQLException &#123;</span><br><span class="line">	<span class="comment">// 获取结果集参数数量</span></span><br><span class="line">       <span class="keyword">int</span> cols = rsmd.getColumnCount();</span><br><span class="line">       <span class="comment">// 基于参数数量值，创建数组进行参数名的存储</span></span><br><span class="line">       <span class="keyword">int</span>[] columnToProperty = <span class="keyword">new</span> <span class="keyword">int</span>[cols + <span class="number">1</span>];</span><br><span class="line">       <span class="comment">// 数组值默认为 -1</span></span><br><span class="line">       Arrays.fill(columnToProperty, PROPERTY_NOT_FOUND);</span><br><span class="line"></span><br><span class="line">       <span class="keyword">for</span> (<span class="keyword">int</span> col = <span class="number">1</span>; col &lt;= cols; col++) &#123;</span><br><span class="line">           String columnName = rsmd.getColumnLabel(col);</span><br><span class="line">           <span class="keyword">if</span> (<span class="keyword">null</span> == columnName || <span class="number">0</span> == columnName.length()) &#123;</span><br><span class="line">             columnName = rsmd.getColumnName(col);</span><br><span class="line">           &#125;</span><br><span class="line">           <span class="comment">/**</span></span><br><span class="line"><span class="comment">            * columnToPropertyOverrides是 BeanProcessor 持有的一个 HashMap&lt;String, String&gt; 对象</span></span><br><span class="line"><span class="comment">            * 可以通过</span></span><br><span class="line"><span class="comment">            */</span></span><br><span class="line">           String propertyName = columnToPropertyOverrides.get(columnName);</span><br><span class="line">           <span class="keyword">if</span> (propertyName == <span class="keyword">null</span>) &#123;</span><br><span class="line">               propertyName = columnName;</span><br><span class="line">           &#125;</span><br><span class="line">           <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; props.length; i++) &#123;</span><br><span class="line"></span><br><span class="line">               <span class="keyword">if</span> (propertyName.equalsIgnoreCase(props[i].getName())) &#123;</span><br><span class="line">                   columnToProperty[col] = i;</span><br><span class="line">                   <span class="keyword">break</span>;</span><br><span class="line">               &#125;</span><br><span class="line">           &#125;</span><br><span class="line">       &#125;</span><br><span class="line"></span><br><span class="line">       <span class="keyword">return</span> columnToProperty;</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   <span class="keyword">private</span> &lt;T&gt; <span class="function">T <span class="title">populateBean</span><span class="params">(ResultSet rs, T bean,</span></span></span><br><span class="line"><span class="function"><span class="params">           PropertyDescriptor[] props, <span class="keyword">int</span>[] columnToProperty)</span></span></span><br><span class="line"><span class="function">           <span class="keyword">throws</span> SQLException </span>&#123;</span><br><span class="line"></span><br><span class="line">       <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt; columnToProperty.length; i++) &#123;</span><br><span class="line">		<span class="comment">// 如果值为-1，跳过，无需设置</span></span><br><span class="line">           <span class="keyword">if</span> (columnToProperty[i] == PROPERTY_NOT_FOUND) &#123;</span><br><span class="line">               <span class="keyword">continue</span>;</span><br><span class="line">           &#125;</span><br><span class="line"></span><br><span class="line">           PropertyDescriptor prop = props[columnToProperty[i]];</span><br><span class="line">           Class&lt;?&gt; propType = prop.getPropertyType();</span><br><span class="line"></span><br><span class="line">           Object value = <span class="keyword">null</span>;</span><br><span class="line">           <span class="keyword">if</span>(propType != <span class="keyword">null</span>) &#123;</span><br><span class="line">               value = <span class="keyword">this</span>.processColumn(rs, i, propType);</span><br><span class="line"></span><br><span class="line">               <span class="keyword">if</span> (value == <span class="keyword">null</span> &amp;&amp; propType.isPrimitive()) &#123;</span><br><span class="line">                   value = primitiveDefaults.get(propType);</span><br><span class="line">               &#125;</span><br><span class="line">           &#125;</span><br><span class="line"></span><br><span class="line">           <span class="keyword">this</span>.callSetter(bean, prop, value);</span><br><span class="line">       &#125;</span><br><span class="line"></span><br><span class="line">       <span class="keyword">return</span> bean;</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 将值设置至Java Bean实例中</span></span><br><span class="line">   <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">callSetter</span><span class="params">(Object target, PropertyDescriptor prop, Object value)</span></span></span><br><span class="line"><span class="function">           <span class="keyword">throws</span> SQLException </span>&#123;</span><br><span class="line">	<span class="comment">// 获取属性set方法</span></span><br><span class="line">       Method setter = getWriteMethod(target, prop, value);</span><br><span class="line"></span><br><span class="line">       <span class="keyword">if</span> (setter == <span class="keyword">null</span> || setter.getParameterTypes().length != <span class="number">1</span>) &#123;</span><br><span class="line">           <span class="keyword">return</span>;</span><br><span class="line">       &#125;</span><br><span class="line"></span><br><span class="line">       <span class="keyword">try</span> &#123;</span><br><span class="line">           Class&lt;?&gt; firstParam = setter.getParameterTypes()[<span class="number">0</span>];</span><br><span class="line">           <span class="keyword">for</span> (PropertyHandler handler : propertyHandlers) &#123;</span><br><span class="line">               <span class="keyword">if</span> (handler.match(firstParam, value)) &#123;</span><br><span class="line">                   value = handler.apply(firstParam, value);</span><br><span class="line">                   <span class="keyword">break</span>;</span><br><span class="line">               &#125;</span><br><span class="line">           &#125;</span><br><span class="line"></span><br><span class="line">           <span class="comment">// Don't call setter if the value object isn't the right type</span></span><br><span class="line">           <span class="keyword">if</span> (<span class="keyword">this</span>.isCompatibleType(value, firstParam)) &#123;</span><br><span class="line">               setter.invoke(target, <span class="keyword">new</span> Object[]&#123;value&#125;);</span><br><span class="line">           &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">             <span class="keyword">throw</span> <span class="keyword">new</span> SQLException(</span><br><span class="line">                 <span class="string">"Cannot set "</span> + prop.getName() + <span class="string">": incompatible types, cannot convert "</span></span><br><span class="line">                 + value.getClass().getName() + <span class="string">" to "</span> + firstParam.getName());</span><br><span class="line">                 <span class="comment">// value cannot be null here because isCompatibleType allows null</span></span><br><span class="line">           &#125;</span><br><span class="line"></span><br><span class="line">       &#125; <span class="keyword">catch</span> (IllegalArgumentException e) &#123;</span><br><span class="line">           <span class="keyword">throw</span> <span class="keyword">new</span> SQLException(</span><br><span class="line">               <span class="string">"Cannot set "</span> + prop.getName() + <span class="string">": "</span> + e.getMessage());</span><br><span class="line"></span><br><span class="line">       &#125; <span class="keyword">catch</span> (IllegalAccessException e) &#123;</span><br><span class="line">           <span class="keyword">throw</span> <span class="keyword">new</span> SQLException(</span><br><span class="line">               <span class="string">"Cannot set "</span> + prop.getName() + <span class="string">": "</span> + e.getMessage());</span><br><span class="line"></span><br><span class="line">       &#125; <span class="keyword">catch</span> (InvocationTargetException e) &#123;</span><br><span class="line">           <span class="keyword">throw</span> <span class="keyword">new</span> SQLException(</span><br><span class="line">               <span class="string">"Cannot set "</span> + prop.getName() + <span class="string">": "</span> + e.getMessage());</span><br><span class="line">       &#125;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure></p>
+<p>以上代码的分析是基于同步下查询SQL执行结果转换为Bean的业务需求下的，关于插入、更新SQL执行代码，结果转换为BeanList、BeanMap的代码这里不再进行介绍。<br>这里再简单跟踪下异步查询的代码，先进入<code>AsyncQueryRunner</code>类<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AsyncQueryRunner</span> <span class="keyword">extends</span> <span class="title">AbstractQueryRunner</span> </span>&#123;</span><br><span class="line">	...</span><br><span class="line">    <span class="comment">// 内部持有线程池接口</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> ExecutorService executorService;</span><br><span class="line">    </span><br><span class="line">	<span class="comment">// 内部持有QueryRunner的对象</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> QueryRunner queryRunner;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 在构造函数中对类属性进行初始化</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">AsyncQueryRunner</span><span class="params">(ExecutorService executorService, QueryRunner queryRunner)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.executorService = executorService;</span><br><span class="line">        <span class="keyword">this</span>.queryRunner = queryRunner;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>进入查询接口<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> &lt;T&gt; <span class="function">Future&lt;T&gt; <span class="title">query</span><span class="params">(<span class="keyword">final</span> Connection conn, <span class="keyword">final</span> String sql, <span class="keyword">final</span> ResultSetHandler&lt;T&gt; rsh)</span> <span class="keyword">throws</span> SQLException </span>&#123;</span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 使用线程池接口，异步提交查询任务</span></span><br><span class="line"><span class="comment">     * 最终查询任务的执行，交给queryRunner</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">return</span> executorService.submit(<span class="keyword">new</span> Callable&lt;T&gt;() &#123;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> T <span class="title">call</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> queryRunner.query(conn, sql, rsh);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<ol start="4">
+<li>资源关闭<br>在 <code>QueryRunner</code>类中，每个需要执行SQL的过程，工具自动为我们关闭了相关资源，例如<code>query</code>接口。而实际关闭的过程，是由DbUtils类实现的<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"># org.apache.commons.dbutils.AbstractQueryRunner</span><br><span class="line">   <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">close</span><span class="params">(Statement stmt)</span> <span class="keyword">throws</span> SQLException </span>&#123;</span><br><span class="line">       DbUtils.close(stmt);</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line"># org.apache.commons.dbutils.DbUtils</span><br><span class="line">   <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">close</span><span class="params">(Statement stmt)</span> <span class="keyword">throws</span> SQLException </span>&#123;</span><br><span class="line">       <span class="keyword">if</span> (stmt != <span class="keyword">null</span>) &#123;</span><br><span class="line">           stmt.close();</span><br><span class="line">       &#125;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>以上基于Jdbc封装的过程角度跟踪进入DbUtils源码进行分析，DbUtils除以上分析之外，还围绕jbdc提供了其他优化，比如</p>
+<ul>
+<li>以文件形式加载SQL的实现类 <code>org.apache.commons.dbutils.QueryLoader</code></li>
+<li>jdbc接口的代理类 <code>org.apache.commons.dbutils.ProxyFactory</code></li>
+</ul>
+<p>这里，就不一一介绍了。</p>
+<h2 id="设计模式"><a href="#设计模式" class="headerlink" title="设计模式"></a>设计模式</h2><p>总体上而言，DbUtils类数量较小，所使用到的设计模式比较有限，典型的有如下</p>
+<ul>
+<li>构建者模式 Builder Pattern<br>org.apache.commons.dbutils.StatementConfiguration</li>
+</ul>
+<p>StatementConfiguration是关于语句Statement配置类，内部持有 5 个属性，在创建该类时如果挨个对属性赋值比较繁琐，且使用没有必要对属性依次赋值。这里使用构建者模式，省略了其中的指挥者和建造者角色。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">    * Builder 是 StatementConfiguration 内部类，该类内部对外部类每个熟悉提供单独的设置方法，并将对象本身返回</span></span><br><span class="line"><span class="comment">    * 最终 Builder#build 将设置的参数传递至外部类，从而创建StatementConfiguration对象</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">   <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">Builder</span> </span>&#123;</span><br><span class="line">       <span class="keyword">private</span> Integer fetchDirection;</span><br><span class="line">       <span class="keyword">private</span> Integer fetchSize;</span><br><span class="line">       <span class="keyword">private</span> Integer maxRows;</span><br><span class="line">       <span class="keyword">private</span> Integer queryTimeout;</span><br><span class="line">       <span class="keyword">private</span> Integer maxFieldSize;</span><br><span class="line"></span><br><span class="line">       <span class="function"><span class="keyword">public</span> Builder <span class="title">fetchDirection</span><span class="params">(<span class="keyword">final</span> Integer fetchDirection)</span> </span>&#123;</span><br><span class="line">           <span class="keyword">this</span>.fetchDirection = fetchDirection;</span><br><span class="line">           <span class="keyword">return</span> <span class="keyword">this</span>;</span><br><span class="line">       &#125;</span><br><span class="line"></span><br><span class="line">       <span class="function"><span class="keyword">public</span> Builder <span class="title">fetchSize</span><span class="params">(<span class="keyword">final</span> Integer fetchSize)</span> </span>&#123;</span><br><span class="line">           <span class="keyword">this</span>.fetchSize = fetchSize;</span><br><span class="line">           <span class="keyword">return</span> <span class="keyword">this</span>;</span><br><span class="line">       &#125;</span><br><span class="line"></span><br><span class="line">       <span class="function"><span class="keyword">public</span> Builder <span class="title">maxRows</span><span class="params">(<span class="keyword">final</span> Integer maxRows)</span> </span>&#123;</span><br><span class="line">           <span class="keyword">this</span>.maxRows = maxRows;</span><br><span class="line">           <span class="keyword">return</span> <span class="keyword">this</span>;</span><br><span class="line">       &#125;</span><br><span class="line"></span><br><span class="line">       <span class="function"><span class="keyword">public</span> Builder <span class="title">queryTimeout</span><span class="params">(<span class="keyword">final</span> Integer queryTimeout)</span> </span>&#123;</span><br><span class="line">           <span class="keyword">this</span>.queryTimeout = queryTimeout;</span><br><span class="line">           <span class="keyword">return</span> <span class="keyword">this</span>;</span><br><span class="line">       &#125;</span><br><span class="line"></span><br><span class="line">       <span class="function"><span class="keyword">public</span> Builder <span class="title">maxFieldSize</span><span class="params">(<span class="keyword">final</span> Integer maxFieldSize)</span> </span>&#123;</span><br><span class="line">           <span class="keyword">this</span>.maxFieldSize = maxFieldSize;</span><br><span class="line">           <span class="keyword">return</span> <span class="keyword">this</span>;</span><br><span class="line">       &#125;</span><br><span class="line"></span><br><span class="line">       <span class="function"><span class="keyword">public</span> StatementConfiguration <span class="title">build</span><span class="params">()</span> </span>&#123;</span><br><span class="line">           <span class="keyword">return</span> <span class="keyword">new</span> StatementConfiguration(fetchDirection, fetchSize, maxFieldSize, maxRows, queryTimeout);</span><br><span class="line">       &#125;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li>单例模式 Singleton Pattern<br>org.apache.commons.dbutils.QueryLoader</li>
+</ul>
+<p>这里使用饿汉式，类内部持有对象，提供静态方法供外界访问对象，同时对类的构造方法访问权限予以限制<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">QueryLoader</span> </span>&#123;</span><br><span class="line">	...</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> QueryLoader instance = <span class="keyword">new</span> QueryLoader();</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> QueryLoader <span class="title">instance</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> instance;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="title">QueryLoader</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="单元测试"><a href="#单元测试" class="headerlink" title="单元测试"></a>单元测试</h2><p>DbUtils源码中展示了详细了单元测试code，就直观感受如下：</p>
+<ol>
+<li>借助 maven 搭建单元测试环境，打包时不包含单元测试代码</li>
+<li>使用Junit进行单元测试，借用Mockito生成虚拟对象，屏蔽被测试类之间的关联</li>
+<li>几乎每个类，都有单独的测试类与之对应，接口覆盖率高</li>
+</ol>
+<h2 id="maven插件"><a href="#maven插件" class="headerlink" title="maven插件"></a>maven插件</h2><p>下面就DbUtils用到的maven插件，了解该插件在项目构建过程中的作用</p>
+<ul>
+<li>maven-checkstyle-plugin<br>用于校验代码规范，使用配置文件 dbutils/checkstyle.xml 描述规范要求</li>
+<li>maven-assembly-plugin<br>定制化打包，使用<code>src/main/assembly/bin.xml</code> <code>src/main/assembly/src.xml</code>描述打包细节</li>
+<li>findbugs-maven-plugin<br>进行代码静态分析</li>
+<li>maven-pmd-plugin<br>借助pwd进行静态代码分析</li>
+<li>maven-changes-plugin<br>进行打包版本变化说明</li>
+</ul>
+<h2 id="代码优化"><a href="#代码优化" class="headerlink" title="代码优化"></a>代码优化</h2><p>之所以将这节放置于本文最后，是因为阅读了源码，总该有点啥想法，但绝大多数的这种想法，往往是自以为是。这里我只能基于自身经验，提出一些自我感觉比较怪异的点来。</p>
+<ul>
+<li><code>BasicRowProcessor</code>对象创建过程<br>BasicRowProcessor类的创建过程一方面准备使用单例，另外一方面也提供了<code>public</code>访问权限的构造函数。此外，ResultSetHandler子类在将结果集转换成相应类型时，使用的转换器实例来源于<code>ArrayHandler</code>的内部持有对象<code>ROW_PROCESSOR</code>。这样做来，单例没有起到作用，<code>BasicRowProcessor</code>类的实例获取入口改到了<code>ArrayHandler</code>类里。</li>
+</ul>
+<!--
+## 代码可以改进的地方
+
+1. RowProcesser 单例实现，未单独出来
+<figure class="highlight aspectj"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">org.apache.commons.dbutils.handlers.ArrayHandler</span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">final</span> RowProcessor ROW_PROCESSOR = <span class="keyword">new</span> BasicRowProcessor();</span><br><span class="line"></span><br><span class="line">org.apache.commons.dbutils.handlers.ArrayListHandler</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">ArrayListHandler</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>(ArrayHandler.ROW_PROCESSOR);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<ol start="2">
+<li>ListHandler sql操作结果转换不完美<figure class="highlight lasso"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">org.apache.commons.dbutils.handlers.AbstractListHandler</span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">List</span>&lt;T&gt; <span class="keyword">handle</span>(final <span class="keyword">ResultSet</span> rs) throws SQLException &#123;</span><br><span class="line">        final <span class="built_in">List</span>&lt;T&gt; <span class="keyword">rows</span> = <span class="literal">new</span> ArrayList&lt;&gt;();</span><br><span class="line">        <span class="keyword">while</span> (rs.next()) &#123;		<span class="comment">// 这里的while，最多执行一遍</span></span><br><span class="line">            <span class="keyword">rows</span>.add(this.handleRow(rs));</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">rows</span>;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>–&gt;</p>
+-->
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/源码阅读/" rel="tag"># 源码阅读</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/08/12/commons-dbutils-源码阅读（上）/" rel="next" title="commons-dbutils 源码阅读（上）">
+                <i class="fa fa-chevron-left"></i> commons-dbutils 源码阅读（上）
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="watermelon" />
+          <p class="site-author-name" itemprop="name">watermelon</p>
+           
+              <p class="site-description motion-element" itemprop="description">百无一用此书生</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">8</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">6</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#源码阅读"><span class="nav-number">1.</span> <span class="nav-text">源码阅读</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#设计模式"><span class="nav-number">2.</span> <span class="nav-text">设计模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#单元测试"><span class="nav-number">3.</span> <span class="nav-text">单元测试</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#maven插件"><span class="nav-number">4.</span> <span class="nav-text">maven插件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#代码优化"><span class="nav-number">5.</span> <span class="nav-text">代码优化</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2017 - 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">watermelon</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      
+    </span>
+  
+</div>
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>
