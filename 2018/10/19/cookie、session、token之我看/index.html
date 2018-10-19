@@ -83,7 +83,7 @@
 <link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="maven," />
+  <meta name="keywords" content="web," />
 
 
 
@@ -99,18 +99,18 @@
 
 
 
-<meta name="description" content="最近在看DBUtils源码时，需要下载maven插件打包，idea一直显示pom.xml文件报红，后来才知晓，maven仓库下载某个构件，如果遇到意外情况（如网络断开）导致下载失败，将会出现一个以 .lastUpdated后缀的文件，此时，即使意外情况消失（如网络恢复连接）时，也不会再进行该构件的下载。这时需要手动删除该文件。下面是删除该文件的脚本。 在linux系统上，切换至仓库目录上执行1$">
-<meta name="keywords" content="maven">
+<meta name="description" content="最近开始新的项目，搭建项目框架期间对于cookie、session、token进行了新的思考，尝试着说明下他们在web项目中客户端与服务器互动的作用。 作用Web项目中使用Http作为交互协议，Http是无状态的，也就是说，服务端没有办法对访问的客户端的上一次操作结果添加记录，进行行为区分。当然，服务端无法记录上一次操作结果，服务端可以区分访问者，在每个客户端访问时，为其开启一个独立的会话，也就是">
+<meta name="keywords" content="web">
 <meta property="og:type" content="article">
-<meta property="og:title" content="maven清理LastUpdated文件脚本">
-<meta property="og:url" content="http://yoursite.com/2018/07/31/maven清理LastUpdated文件脚本/index.html">
+<meta property="og:title" content="cookie、session、token之我看">
+<meta property="og:url" content="http://yoursite.com/2018/10/19/cookie、session、token之我看/index.html">
 <meta property="og:site_name" content="watermelon">
-<meta property="og:description" content="最近在看DBUtils源码时，需要下载maven插件打包，idea一直显示pom.xml文件报红，后来才知晓，maven仓库下载某个构件，如果遇到意外情况（如网络断开）导致下载失败，将会出现一个以 .lastUpdated后缀的文件，此时，即使意外情况消失（如网络恢复连接）时，也不会再进行该构件的下载。这时需要手动删除该文件。下面是删除该文件的脚本。 在linux系统上，切换至仓库目录上执行1$">
+<meta property="og:description" content="最近开始新的项目，搭建项目框架期间对于cookie、session、token进行了新的思考，尝试着说明下他们在web项目中客户端与服务器互动的作用。 作用Web项目中使用Http作为交互协议，Http是无状态的，也就是说，服务端没有办法对访问的客户端的上一次操作结果添加记录，进行行为区分。当然，服务端无法记录上一次操作结果，服务端可以区分访问者，在每个客户端访问时，为其开启一个独立的会话，也就是">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-08-01T02:49:33.498Z">
+<meta property="og:updated_time" content="2018-10-19T08:30:20.085Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="maven清理LastUpdated文件脚本">
-<meta name="twitter:description" content="最近在看DBUtils源码时，需要下载maven插件打包，idea一直显示pom.xml文件报红，后来才知晓，maven仓库下载某个构件，如果遇到意外情况（如网络断开）导致下载失败，将会出现一个以 .lastUpdated后缀的文件，此时，即使意外情况消失（如网络恢复连接）时，也不会再进行该构件的下载。这时需要手动删除该文件。下面是删除该文件的脚本。 在linux系统上，切换至仓库目录上执行1$">
+<meta name="twitter:title" content="cookie、session、token之我看">
+<meta name="twitter:description" content="最近开始新的项目，搭建项目框架期间对于cookie、session、token进行了新的思考，尝试着说明下他们在web项目中客户端与服务器互动的作用。 作用Web项目中使用Http作为交互协议，Http是无状态的，也就是说，服务端没有办法对访问的客户端的上一次操作结果添加记录，进行行为区分。当然，服务端无法记录上一次操作结果，服务端可以区分访问者，在每个客户端访问时，为其开启一个独立的会话，也就是">
 
 
 
@@ -138,13 +138,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2018/07/31/maven清理LastUpdated文件脚本/"/>
+  <link rel="canonical" href="http://yoursite.com/2018/10/19/cookie、session、token之我看/"/>
 
 
 
 
 
-  <title>maven清理LastUpdated文件脚本 | watermelon</title>
+  <title>cookie、session、token之我看 | watermelon</title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -264,7 +264,7 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/07/31/maven清理LastUpdated文件脚本/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/10/19/cookie、session、token之我看/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="watermelon">
@@ -281,7 +281,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">maven清理LastUpdated文件脚本</h1>
+          <h1 class="post-title" itemprop="name headline">cookie、session、token之我看</h1>
         
 
         <div class="post-meta">
@@ -293,8 +293,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-07-31T18:05:53+08:00">
-                2018-07-31
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-10-19T15:43:03+08:00">
+                2018-10-19
               </time>
             
 
@@ -333,9 +333,19 @@
       
 
       
-        <p>最近在看DBUtils源码时，需要下载maven插件打包，idea一直显示pom.xml文件报红，后来才知晓，maven仓库下载某个构件，如果遇到意外情况（如网络断开）导致下载失败，将会出现一个以 .lastUpdated后缀的文件，此时，即使意外情况消失（如网络恢复连接）时，也不会再进行该构件的下载。这时需要手动删除该文件。下面是删除该文件的脚本。</p>
-<p>在linux系统上，切换至仓库目录上执行<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> find ./ -name <span class="string">"*.lastUpdated"</span> -<span class="built_in">type</span> f -<span class="built_in">exec</span> rm &#123;&#125; \;</span></span><br></pre></td></tr></table></figure></p>
-<p>在windos系统上，设置仓库路径后保存为bat文件执行即可<br><figure class="highlight dos"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">@<span class="built_in">echo</span> off</span><br><span class="line"><span class="built_in">set</span> REPOSITORY_PATH=E:\repository</span><br><span class="line"><span class="keyword">for</span> /f "delims=" <span class="variable">%%i</span> <span class="keyword">in</span> ('<span class="built_in">dir</span> /b /s "<span class="variable">%REPOSITORY_PATH%</span>\*lastUpdated*"') <span class="keyword">do</span> (</span><br><span class="line">    <span class="built_in">del</span> /s /q <span class="variable">%%i</span></span><br><span class="line">)</span><br><span class="line"><span class="built_in">pause</span></span><br></pre></td></tr></table></figure></p>
+        <p>最近开始新的项目，搭建项目框架期间对于cookie、session、token进行了新的思考，尝试着说明下他们在web项目中客户端与服务器互动的作用。</p>
+<h3 id="作用"><a href="#作用" class="headerlink" title="作用"></a>作用</h3><p>Web项目中使用Http作为交互协议，Http是无状态的，也就是说，服务端没有办法对访问的客户端的上一次操作结果添加记录，进行行为区分。当然，服务端无法记录上一次操作结果，服务端可以区分访问者，在每个客户端访问时，为其开启一个独立的会话，也就是Session，Session中存储着客户端的相关信息，比如客户端登录所使用的用户名等。</p>
+<p>服务端会将创建的Session返回给客户端，客户端下一次访问时，便携带SessionId信息。</p>
+<p>客户端（这里仅只浏览器）获取到服务端返回的Session，借助浏览器的Cookie技术，将Session保存在本地。</p>
+<p>Token则称之为令牌，用于用户认证过程中服务端创建，并返回给客户端的一种凭证，凭证可能是登录用户信息的序列化数据，也可以只是一串随机生成的字符串而已。</p>
+<h3 id="本质"><a href="#本质" class="headerlink" title="本质"></a>本质</h3><p>从本质的角度出发，尝试着更加准确的认清他们：<br><figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="bullet">1. </span>cookie	是一种浏览器技术，用于保存键值对数据，浏览器可设置该功能的开启关闭；移动客户端无法使用Cookie</span><br><span class="line"><span class="bullet">2. </span>session	服务端生成的一种数据结构，内部存储相关信息，如用户信息等</span><br><span class="line"><span class="bullet">3. </span>token	一串字符串，服务端生成并返回给客户端的登录令牌与凭证，字符串内容可以是用户登录信息的序列化字符串，也可以直接是随机生成的一串字符。当然，token不仅仅用于用户认证过程，还可以防止表单重复提交</span><br></pre></td></tr></table></figure></p>
+<h3 id="Web用户认证过程"><a href="#Web用户认证过程" class="headerlink" title="Web用户认证过程"></a>Web用户认证过程</h3><p>这里以自己所了解加猜测的Web的用户认证过程发展来更清楚的说明下三者之前的关系。</p>
+<p>最起始阶段，浏览器访问服务端，可以每次访问请求均携带账号密码，这样每次服务端接受到请求后，校验登录成功后，进行业务处理。这样即每次请求，服务端均需从数据库中查询用户账号密码之类，以获取该登录用户的信息。</p>
+<p>这种方式麻烦，不安全，当然不可取。</p>
+<p>接着，浏览器首次请求时携带账号密码，服务端基于此次访问，会首先创建会话（session），校验账号密码通过后，将用户信息存放在session中，并将session返回给浏览器，浏览器借助cookie技术保存用户信息，后续每次访问便携带此次session。</p>
+<p>这种方式受限于Cookie不可跨域，多机部署时，Session不能共享。</p>
+<p>现在，浏览器首次访问时携带账号密码，服务端首先创建Session，再对账号密码进行校验，校验通过后查找出用户信息，或将用户信息加密序列号处理后返回给客户端，客户端下次访问携带token；或生成一段字符串，将字符串与用户信息组成键值对存于缓存之中，用户下次登录时，使用token作key从缓存中取出用户信息。</p>
+<p>这种方式不受限于Cookie技术，移动客户端也可使用token，没有接触Session，在多机环境中无需考虑Session共享或Session持久化的问题。</p>
 
       
     </div>
@@ -365,7 +375,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/maven/" rel="tag"># maven</a>
+            <a href="/tags/web/" rel="tag"># web</a>
           
         </div>
       
@@ -378,8 +388,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/07/23/常用排序算法/" rel="next" title="常用排序算法">
-                <i class="fa fa-chevron-left"></i> 常用排序算法
+              <a href="/2018/09/06/公司电脑使用Chrome插件屏蔽CSDN广告/" rel="next" title="公司电脑使用Chrome插件屏蔽CSDN广告">
+                <i class="fa fa-chevron-left"></i> 公司电脑使用Chrome插件屏蔽CSDN广告
               </a>
             
           </div>
@@ -387,10 +397,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2018/08/12/commons-dbutils-源码阅读（上）/" rel="prev" title="commons-dbutils 源码阅读（上）">
-                commons-dbutils 源码阅读（上） <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -437,8 +443,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview sidebar-panel sidebar-panel-active">
+      <section class="site-overview sidebar-panel">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
           <img class="site-author-image" itemprop="image"
                src="/images/avatar.gif"
@@ -491,6 +506,22 @@
 
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#作用"><span class="nav-number">1.</span> <span class="nav-text">作用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#本质"><span class="nav-number">2.</span> <span class="nav-text">本质</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Web用户认证过程"><span class="nav-number">3.</span> <span class="nav-text">Web用户认证过程</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
